@@ -160,6 +160,32 @@ export default function Souvenirs() {
     }
   };
 
+  // Compress image to a smaller base64 data URL
+  const compressImage = (file, maxWidth = 800, quality = 0.7) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new window.Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let w = img.width;
+          let h = img.height;
+          if (w > maxWidth) {
+            h = (h * maxWidth) / w;
+            w = maxWidth;
+          }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
   // Add Souvenir Handler
   const handleAddSouvenir = async (e) => {
     e.preventDefault();
@@ -185,7 +211,8 @@ export default function Souvenirs() {
             .getPublicUrl(filePath);
           imageUrl = publicUrl;
         } else {
-          console.warn('Storage upload error (using placeholder):', uploadErr);
+          console.warn('Storage upload error (using base64 fallback):', uploadErr);
+          imageUrl = await compressImage(imageFile);
         }
       }
 
