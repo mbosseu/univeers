@@ -1,6 +1,8 @@
 import webpush from 'web-push';
 import { createClient } from '@supabase/supabase-js';
 
+export const prerender = false;
+
 // Configuration web-push
 webpush.setVapidDetails(
   'mailto:contact@univers.com',
