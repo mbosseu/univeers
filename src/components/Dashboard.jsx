@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase.js';
 import Flame from './Flame.jsx';
 import { Settings, CalendarHeart, MessageCircleHeart, Gamepad2, History, Send, Smile, Heart, Award, Loader2, Calendar, Sparkles, MapPin, Plus } from 'lucide-react';
@@ -81,6 +81,8 @@ export default function Dashboard() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showIosInstallTip, setShowIosInstallTip] = useState(false);
 
+  const channelRef = useRef([]);
+
   useEffect(() => {
     checkUser();
 
@@ -108,6 +110,7 @@ export default function Dashboard() {
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handleInstallPrompt);
+      channelRef.current.forEach(c => supabase.removeChannel(c));
     };
   }, []);
 
@@ -254,6 +257,60 @@ export default function Dashboard() {
       // 8. Set Citation du Jour
       const day = new Date().getDate();
       setCitation(CITATIONS[day % CITATIONS.length]);
+
+      // Realtime subscriptions for auto-refreshing dashboard
+      if (userProfile.couple_id) {
+        // Clean existing channels
+        channelRef.current.forEach(c => supabase.removeChannel(c));
+        channelRef.current = [];
+
+        // 1. Couple updates (mood, xp, energy)
+        const coupleChannel = supabase
+          .channel('dashboard_couple_realtime')
+          .on('postgres_changes', {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'couples',
+            filter: `id=eq.${userProfile.couple_id}`
+          }, (payload) => {
+            setCouple(payload.new);
+            if (currentPartner) {
+              const isP1 = userId < currentPartner.id;
+              setMyMood(isP1 ? payload.new.mood_p1 : payload.new.mood_p2);
+            }
+          })
+          .subscribe();
+
+        // 2. Daily responses updates (partner answers daily question)
+        const responseChannel = supabase
+          .channel('dashboard_responses_realtime')
+          .on('postgres_changes', {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'daily_responses',
+            filter: `couple_id=eq.${userProfile.couple_id}`
+          }, (payload) => {
+            if (payload.new.user_id !== userId) {
+              setPartnerResponseText(payload.new.response_text);
+            }
+          })
+          .subscribe();
+
+        // 3. Quest attempts updates (partner completes a challenge)
+        const questChannel = supabase
+          .channel('dashboard_quests_realtime')
+          .on('postgres_changes', {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'quest_attempts',
+            filter: `couple_id=eq.${userProfile.couple_id}`
+          }, (payload) => {
+            setChallengeCompleted(true);
+          })
+          .subscribe();
+
+        channelRef.current = [coupleChannel, responseChannel, questChannel];
+      }
 
       setLoading(false);
     } catch (err) {
