@@ -259,5 +259,5 @@ ALTER TABLE public.time_capsules DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.messages DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.couple_events DISABLE ROW LEVEL SECURITY;
 
--- 15. HABILITER LE TEMPS RÉEL (REALTIME) POUR L'APPLICATION (CHAT, FLAMME, HUMEURS, QUESTIONS, DÉFIS)
-alter publication supabase_realtime add table public.messages, public.couples, public.daily_responses, public.quest_attempts;
+-- 15. HABILITER LE TEMPS RÉEL (REALTIME) POUR L'APPLICATION (CHAT, FLAMME, HUMEURS, QUESTIONS, DÉFIS, SOUVENIRS, RITUELS, CAPSULES)
+alter publication supabase_realtime add table public.messages, public.couples, public.daily_responses, public.quest_attempts, public.souvenirs, public.couple_goals, public.sweet_notes, public.evening_reflections, public.time_capsules;
