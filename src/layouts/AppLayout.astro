@@ -49,6 +49,7 @@ const { title } = Astro.props;
 			<div class="splash-content">
 				<img src="/logo.png" alt="Univers Logo" class="splash-logo-exact" />
 				<p class="splash-slogan">Chaque geste d'amour nourrit votre flamme</p>
+				<button id="splash-dismiss-btn" class="splash-btn">Continuer</button>
 			</div>
 		</div>
 
@@ -152,12 +153,12 @@ const { title } = Astro.props;
 						}
 					};
 
-					// Dismiss on click or touch
-					splash.addEventListener('click', dismissSplash);
-					splash.addEventListener('touchstart', dismissSplash);
-
-					// Fallback timeout
-					setTimeout(dismissSplash, 4000);
+					// Dismiss ONLY on button click or touch
+					const dismissBtn = document.getElementById('splash-dismiss-btn');
+					if (dismissBtn) {
+						dismissBtn.addEventListener('click', dismissSplash);
+						dismissBtn.addEventListener('touchstart', dismissSplash);
+					}
 				} else {
 					// Fallback if no canvas support
 					let dismissed = false;
@@ -173,9 +174,11 @@ const { title } = Astro.props;
 						}
 					};
 
-					splash?.addEventListener('click', dismissSplash);
-					splash?.addEventListener('touchstart', dismissSplash);
-					setTimeout(dismissSplash, 4000);
+					const dismissBtn = document.getElementById('splash-dismiss-btn');
+					if (dismissBtn) {
+						dismissBtn.addEventListener('click', dismissSplash);
+						dismissBtn.addEventListener('touchstart', dismissSplash);
+					}
 				}
 			}
 
@@ -375,5 +378,32 @@ const { title } = Astro.props;
 			opacity: 0.8;
 			transform: scale(1.2);
 		}
+	}
+
+	.splash-btn {
+		margin-top: 1.5rem;
+		background-color: var(--color-primary, #a91b22);
+		color: white;
+		border: none;
+		border-radius: 9999px;
+		padding: 14px 36px;
+		font-size: 1.05rem;
+		font-weight: 700;
+		cursor: pointer;
+		box-shadow: 0 4px 15px rgba(169, 27, 34, 0.2);
+		transition: all 0.2s ease;
+		font-family: var(--font-main, sans-serif);
+		z-index: 10;
+		position: relative;
+	}
+
+	.splash-btn:hover {
+		background-color: var(--color-primary-light, #d32f2f);
+		transform: translateY(-2px);
+		box-shadow: 0 6px 20px rgba(169, 27, 34, 0.3);
+	}
+
+	.splash-btn:active {
+		transform: translateY(0);
 	}
 </style>
