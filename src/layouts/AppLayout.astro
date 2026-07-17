@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import GlobalNotifications from '../components/GlobalNotifications.jsx';
 
 interface Props {
 	title: string;
@@ -54,6 +55,7 @@ const { title } = Astro.props;
 		</div>
 
 		<main>
+			<GlobalNotifications client:load />
 			<slot />
 		</main>
 
