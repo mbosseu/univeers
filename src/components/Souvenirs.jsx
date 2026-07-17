@@ -34,6 +34,8 @@ export default function Souvenirs() {
   const [selectedEmotion, setSelectedEmotion] = useState('❤️');
   const [imageFile, setImageFile] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [viewingSouvenir, setViewingSouvenir] = useState(null);
+  const [editingSouvenir, setEditingSouvenir] = useState(null);
 
   const channelRef = useRef(null);
 
@@ -141,6 +143,8 @@ export default function Souvenirs() {
               setSouvenirs(prev => [payload.new, ...prev]);
             } else if (payload.eventType === 'DELETE') {
               setSouvenirs(prev => prev.filter(s => s.id !== payload.old.id));
+            } else if (payload.eventType === 'UPDATE') {
+              setSouvenirs(prev => prev.map(s => s.id === payload.new.id ? payload.new : s));
             }
           })
           .subscribe();
@@ -157,6 +161,30 @@ export default function Souvenirs() {
   const handleImageChange = (e) => {
     if (e.target.files && e.target.files.length > 0) {
       setImageFile(e.target.files[0]);
+    }
+  };
+
+  const handleEditClick = (souvenir) => {
+    setEditingSouvenir(souvenir);
+    setTitle(souvenir.title);
+    setDescription(souvenir.description || '');
+    setLocationName(souvenir.location_name || '');
+    setSouvenirDate(souvenir.souvenir_date ? souvenir.souvenir_date.split('T')[0] : new Date().toISOString().split('T')[0]);
+    setSelectedEmotion('❤️'); 
+    setShowAddForm(true);
+    setViewingSouvenir(null);
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Voulez-vous vraiment supprimer ce souvenir ?')) return;
+    try {
+      const { error } = await supabase.from('souvenirs').delete().eq('id', id);
+      if (error) throw error;
+      setSouvenirs(prev => prev.filter(s => s.id !== id));
+      setViewingSouvenir(null);
+    } catch (err) {
+      console.error(err);
+      alert('Erreur lors de la suppression.');
     }
   };
 
@@ -230,48 +258,60 @@ export default function Souvenirs() {
         lng = 5.3698;
       }
 
-      const { data: newSouvenir, error } = await supabase
-        .from('souvenirs')
-        .insert([{
-          couple_id: profile.couple_id,
-          title: title.trim(),
-          description: description.trim(),
-          media_url: imageUrl,
-          location_name: locationName.trim(),
-          latitude: lat,
-          longitude: lng,
-          souvenir_date: souvenirDate
-        }])
-        .select()
-        .single();
+      const payload = {
+        title: title.trim(),
+        description: description.trim(),
+        media_url: imageUrl,
+        location_name: locationName.trim(),
+        latitude: lat,
+        longitude: lng,
+        souvenir_date: souvenirDate
+      };
 
-      if (error) throw error;
+      if (editingSouvenir) {
+        const { data, error } = await supabase
+          .from('souvenirs')
+          .update(payload)
+          .eq('id', editingSouvenir.id)
+          .select()
+          .single();
+        if (error) throw error;
+      } else {
+        payload.couple_id = profile.couple_id;
+        const { data: newSouvenir, error } = await supabase
+          .from('souvenirs')
+          .insert([payload])
+          .select()
+          .single();
 
-      // Award XP (+30 XP)
-      const { data: couple } = await supabase
-        .from('couples')
-        .select('flame_xp, flame_energy')
-        .eq('id', profile.couple_id)
-        .single();
+        if (error) throw error;
 
-      if (couple) {
-        await supabase
+        // Award XP (+30 XP)
+        const { data: couple } = await supabase
           .from('couples')
-          .update({
-            flame_xp: couple.flame_xp + 30,
-            flame_energy: Math.min(100, couple.flame_energy + 15)
-          })
-          .eq('id', profile.couple_id);
+          .select('flame_xp, flame_energy')
+          .eq('id', profile.couple_id)
+          .single();
+
+        if (couple) {
+          await supabase
+            .from('couples')
+            .update({
+              flame_xp: couple.flame_xp + 30,
+              flame_energy: Math.min(100, couple.flame_energy + 10)
+            })
+            .eq('id', profile.couple_id);
+        }
       }
 
-      setSouvenirs(prev => [newSouvenir, ...prev]);
-      
       // Reset form
       setTitle('');
       setDescription('');
       setLocationName('');
       setImageFile(null);
+      setSelectedEmotion('❤️');
       setShowAddForm(false);
+      setEditingSouvenir(null);
     } catch (err) {
       console.error(err);
     } finally {
@@ -360,13 +400,40 @@ export default function Souvenirs() {
         )}
       </div>
 
+      {/* Viewing Souvenir Modal */}
+      {viewingSouvenir && (
+        <div className="modal-overlay">
+          <div className="modal-card" style={{ padding: '2rem 1.5rem', maxWidth: '500px' }}>
+            <div className="modal-header" style={{ marginBottom: '1.5rem' }}>
+              <h2 className="title-cursive" style={{ fontSize: '2.2rem' }}>{viewingSouvenir.title}</h2>
+              <button onClick={() => setViewingSouvenir(null)} className="close-btn">&times;</button>
+            </div>
+            <div style={{ marginBottom: '1.5rem' }}>
+              <img src={viewingSouvenir.media_url} alt={viewingSouvenir.title} style={{ width: '100%', height: '300px', objectFit: 'cover', borderRadius: '12px' }} />
+            </div>
+            <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem', color: 'var(--color-text-light)', fontSize: '0.9rem' }}>
+              <span><Calendar size={14} style={{ display: 'inline', verticalAlign: 'text-bottom', marginRight: '4px' }} />{new Date(viewingSouvenir.souvenir_date).toLocaleDateString()}</span>
+              {viewingSouvenir.location_name && (
+                <span><MapPin size={14} style={{ display: 'inline', verticalAlign: 'text-bottom', marginRight: '4px' }} />{viewingSouvenir.location_name}</span>
+              )}
+            </div>
+            <p style={{ lineHeight: '1.6', marginBottom: '2rem' }}>{viewingSouvenir.description}</p>
+            
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+              <button type="button" onClick={() => handleEditClick(viewingSouvenir)} className="btn btn-outline" style={{ padding: '8px 16px', fontSize: '0.9rem' }}>Modifier</button>
+              <button type="button" onClick={() => handleDelete(viewingSouvenir.id)} className="btn" style={{ background: '#d32f2f', padding: '8px 16px', fontSize: '0.9rem' }}>Supprimer</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Add Souvenir Modal */}
       {showAddForm && (
         <div className="modal-overlay">
           <div className="modal-card" style={{ padding: '2rem 1.5rem', maxWidth: '450px' }}>
             <div className="modal-header" style={{ marginBottom: '1.5rem' }}>
-              <h2 className="title-cursive" style={{ fontSize: '2.2rem' }}>Nouveau souvenir</h2>
-              <button onClick={() => setShowAddForm(false)} className="close-btn">&times;</button>
+              <h2 className="title-cursive" style={{ fontSize: '2.2rem' }}>{editingSouvenir ? 'Modifier le souvenir' : 'Nouveau souvenir'}</h2>
+              <button onClick={() => { setShowAddForm(false); setEditingSouvenir(null); }} className="close-btn">&times;</button>
             </div>
 
             <form onSubmit={handleAddSouvenir} className="auth-form" style={{ gap: '1.2rem' }}>
