@@ -3,15 +3,23 @@ import { createClient } from '@supabase/supabase-js';
 
 export const prerender = false;
 
-// Configuration web-push
-webpush.setVapidDetails(
-  'mailto:contact@univers.com',
-  import.meta.env.PUBLIC_VAPID_KEY,
-  import.meta.env.PRIVATE_VAPID_KEY
-);
-
 export const POST = async ({ request }) => {
   try {
+    const publicKey = import.meta.env.PUBLIC_VAPID_KEY || process.env.PUBLIC_VAPID_KEY;
+    const privateKey = import.meta.env.PRIVATE_VAPID_KEY || process.env.PRIVATE_VAPID_KEY;
+
+    if (!publicKey || !privateKey) {
+      console.error('VAPID keys are missing');
+      return new Response(JSON.stringify({ error: 'Server misconfiguration: VAPID keys missing' }), { status: 500 });
+    }
+
+    // Configuration web-push
+    webpush.setVapidDetails(
+      'mailto:contact@univers.com',
+      publicKey,
+      privateKey
+    );
+
     const body = await request.json();
     const { coupleId, senderId, title, messageText, url, messageType } = body;
 

@@ -6,9 +6,15 @@ var notify_exports = /* @__PURE__ */ __exportAll({
 	POST: () => POST,
 	prerender: () => false
 });
-webpush.setVapidDetails("mailto:contact@univers.com", void 0, void 0);
 var POST = async ({ request }) => {
 	try {
+		const publicKey = process.env.PUBLIC_VAPID_KEY;
+		const privateKey = process.env.PRIVATE_VAPID_KEY;
+		if (!publicKey || !privateKey) {
+			console.error("VAPID keys are missing");
+			return new Response(JSON.stringify({ error: "Server misconfiguration: VAPID keys missing" }), { status: 500 });
+		}
+		webpush.setVapidDetails("mailto:contact@univers.com", publicKey, privateKey);
 		const { coupleId, senderId, title, messageText, url, messageType } = await request.json();
 		if (!coupleId || !senderId) return new Response(JSON.stringify({ error: "Missing coupleId or senderId" }), { status: 400 });
 		const supabase = createClient("https://btijpjibghnmqalmbwsv.supabase.co", "sb_publishable_8dOe6ZKFoWb1GKuPKdI1Yw_Er10tJRB");
