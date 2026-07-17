@@ -3,6 +3,7 @@
   "short_name": "Univers",
   "description": "Chaque geste d'amour nourrit votre flamme.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#fdfbf7",
   "theme_color": "#a91b22",
