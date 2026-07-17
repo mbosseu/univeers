@@ -19,6 +19,34 @@ const CITATIONS = [
   "Ton amour est le soleil qui illumine mon Univers."
 ];
 
+const TOUR_STEPS = [
+  {
+    title: "Bienvenue sur Univers ! ❤️🔥",
+    desc: "Votre sanctuaire d'amour à deux. Faisons un petit tour pour découvrir les boutons clés de votre espace complice.",
+    target: "body"
+  },
+  {
+    title: "La Flamme Centrale ❤️🔥",
+    desc: "C'est le cœur d'Univers. Complétez des défis, répondez à la question du soir ou envoyez des souvenirs pour faire grimper son XP et déverrouiller des effets magiques (jusqu'au niveau 6 !).",
+    target: ".flame-section"
+  },
+  {
+    title: "L'Assistant d'Amour 🔮",
+    desc: "En manque d'inspiration ? Cliquez sur la boule de cristal pour générer des poèmes, lettres d'amour, excuses sincères ou des idées de rendez-vous en un clic avec l'IA Gemini.",
+    target: ".icon-btn[href='/assistant']"
+  },
+  {
+    title: "Le Menu Complice 📱",
+    desc: "Naviguez facilement entre votre Univers (🔥), vos Rituels quotidiens (🌸), la Discussion de couple avec messages secrets (💬), vos Capsules temporelles (⏳) et votre Album photo géolocalisé (📸).",
+    target: ".bottom-nav"
+  },
+  {
+    title: "Réglages & Thèmes ⚙️",
+    desc: "Cliquez sur l'engrenage pour changer de thème visuel (Rose, Bleu ou Crème), passer le quiz des Langages de l'amour, et consulter vos Badges de succès déverrouillés !",
+    target: ".icon-btn[href='/settings']"
+  }
+];
+
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
@@ -47,8 +75,40 @@ export default function Dashboard() {
   const [submittingEvent, setSubmittingEvent] = useState(false);
   const [myMood, setMyMood] = useState('');
 
+  // V1.2 Tour & Install States
+  const [tourStep, setTourStep] = useState(-1);
+  const [showInstallPrompt, setShowInstallPrompt] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showIosInstallTip, setShowIosInstallTip] = useState(false);
+
   useEffect(() => {
     checkUser();
+
+    // Check if tour should run
+    const tourDone = localStorage.getItem('univers-tour-done');
+    if (!tourDone) {
+      setTourStep(0);
+    }
+
+    // PWA Install listeners
+    const handleInstallPrompt = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowInstallPrompt(true);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleInstallPrompt);
+
+    // Detect iOS Outside Standalone
+    const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window).MSStream;
+    const isStandalone = (window.navigator).standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+    if (isIos && !isStandalone) {
+      setShowIosInstallTip(true);
+    }
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleInstallPrompt);
+    };
   }, []);
 
   async function checkUser() {
@@ -222,6 +282,29 @@ export default function Dashboard() {
     }
   };
 
+  const triggerInstall = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setShowInstallPrompt(false);
+      setDeferredPrompt(null);
+    }
+  };
+
+  const handleNextTourStep = () => {
+    if (tourStep < TOUR_STEPS.length - 1) {
+      setTourStep(prev => prev + 1);
+    } else {
+      handleCompleteTour();
+    }
+  };
+
+  const handleCompleteTour = () => {
+    setTourStep(-1);
+    localStorage.setItem('univers-tour-done', 'true');
+  };
+
   // Add Event Handler
   const handleAddEvent = async (e) => {
     e.preventDefault();
@@ -391,6 +474,35 @@ export default function Dashboard() {
           </a>
         </div>
       </header>
+
+      {/* PWA Banners */}
+      {showInstallPrompt && (
+        <div className="pwa-install-banner flex-center" style={{ gap: '10px', padding: '10px 14px', background: 'var(--color-primary)', color: 'white', borderRadius: '12px', marginBottom: '1.5rem', justifyContent: 'space-between', boxShadow: 'var(--shadow-sm)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Sparkles size={18} />
+            <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>Installer Univers sur votre écran d'accueil !</span>
+          </div>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button onClick={triggerInstall} className="btn-small" style={{ background: 'white', color: 'var(--color-primary)', border: 'none', padding: '6px 12px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer', boxShadow: 'none' }}>Installer</button>
+            <button onClick={() => setShowInstallPrompt(false)} style={{ background: 'transparent', border: 'none', color: 'white', fontSize: '1.2rem', cursor: 'pointer', padding: 0, boxShadow: 'none' }}>&times;</button>
+          </div>
+        </div>
+      )}
+
+      {showIosInstallTip && (
+        <div className="pwa-install-banner flex-col" style={{ gap: '6px', padding: '12px 14px', background: 'rgba(169, 27, 34, 0.05)', border: '1px solid rgba(169, 27, 34, 0.1)', color: 'var(--color-text)', borderRadius: '12px', marginBottom: '1.5rem', boxShadow: 'var(--shadow-sm)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Sparkles size={18} color="var(--color-primary)" />
+              <span style={{ fontSize: '0.85rem', fontWeight: 700 }}>Installer sur votre iPhone</span>
+            </div>
+            <button onClick={() => setShowIosInstallTip(false)} style={{ background: 'transparent', border: 'none', color: 'var(--color-text-light)', fontSize: '1.2rem', cursor: 'pointer', padding: 0, boxShadow: 'none' }}>&times;</button>
+          </div>
+          <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--color-text-light)', lineHeight: '1.4' }}>
+            Appuyez sur le bouton de partage <strong style={{fontSize:'1.1rem'}}>📤</strong> en bas de Safari, puis faites défiler et sélectionnez <strong style={{color:'var(--color-primary)'}}>➕ Sur l'écran d'accueil</strong>.
+          </p>
+        </div>
+      )}
 
       {/* Mood Section */}
       <div className="card mood-card" style={{ marginBottom: '1.5rem', padding: '1.2rem' }}>
@@ -611,6 +723,71 @@ export default function Dashboard() {
           <span>Souvenirs</span>
         </a>
       </nav>
+
+      {/* Guided Tour Overlay */}
+      {tourStep >= 0 && tourStep < TOUR_STEPS.length && (
+        <div className="tour-overlay" style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          backgroundColor: 'rgba(0, 0, 0, 0.6)',
+          zIndex: 100000,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '1rem',
+          backdropFilter: 'blur(3px)'
+        }}>
+          <div className="tour-card card animate-pop" style={{
+            maxWidth: '360px',
+            width: '100%',
+            padding: '1.5rem',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '12px',
+            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.25)',
+            border: '1px solid rgba(169, 27, 34, 0.1)',
+            background: 'white'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                Guide Univers ({tourStep + 1} / {TOUR_STEPS.length})
+              </span>
+              <button onClick={handleCompleteTour} style={{ background: 'transparent', border: 'none', color: 'var(--color-text-light)', cursor: 'pointer', fontSize: '0.85rem', padding: 0, boxShadow: 'none' }}>
+                Ignorer
+              </button>
+            </div>
+
+            <h3 style={{ margin: 0, fontSize: '1.15rem', color: 'var(--color-text)', fontWeight: 700 }}>
+              {TOUR_STEPS[tourStep].title}
+            </h3>
+            
+            <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--color-text-light)', lineHeight: '1.5' }}>
+              {TOUR_STEPS[tourStep].desc}
+            </p>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px', alignItems: 'center' }}>
+              <div style={{ display: 'flex', gap: '4px' }}>
+                {TOUR_STEPS.map((_, idx) => (
+                  <div key={idx} style={{
+                    width: '6px',
+                    height: '6px',
+                    borderRadius: '50%',
+                    backgroundColor: idx === tourStep ? 'var(--color-primary)' : 'rgba(0,0,0,0.1)',
+                    transition: 'background-color 0.2s'
+                  }} />
+                ))}
+              </div>
+              
+              <button onClick={handleNextTourStep} className="btn btn-small" style={{ width: 'auto', padding: '6px 14px', fontSize: '0.8rem' }}>
+                <span>{tourStep === TOUR_STEPS.length - 1 ? 'Terminer' : 'Suivant'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
