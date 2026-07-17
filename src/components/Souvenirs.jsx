@@ -550,6 +550,11 @@ export default function Souvenirs() {
           <div className="nav-icon"><History /></div>
           <span>Souvenirs</span>
         </a>
+      
+        <a href="/location" className={"nav-item" + (window.location.pathname === '/location' ? ' active' : '')}>
+          <div className="nav-icon"><MapPin /></div>
+          <span>Position</span>
+        </a>
       </nav>
     </div>
   );

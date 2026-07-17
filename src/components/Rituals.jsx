@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase.js';
-import { Sun, Sunset, Moon, Send, Heart, Loader2, Award, CalendarDays, CalendarHeart, History } from 'lucide-react';
+import { Sun, Sunset, Moon, Send, Heart, Loader2, Award, CalendarDays, CalendarHeart, History, MapPin } from 'lucide-react';
 
 const ROMANTIC_QUOTES = [
   "Le plus grand bonheur après celui d'aimer, c'est de confesser son amour. - Gide",
@@ -596,6 +596,11 @@ export default function Rituals() {
         <a href="/souvenirs" className="nav-item">
           <div className="nav-icon"><History /></div>
           <span>Souvenirs</span>
+        </a>
+      
+        <a href="/location" className={"nav-item" + (window.location.pathname === '/location' ? ' active' : '')}>
+          <div className="nav-icon"><MapPin /></div>
+          <span>Position</span>
         </a>
       </nav>
     </div>

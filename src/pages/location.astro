@@ -1,0 +1,8 @@
+---
+import AppLayout from '../layouts/AppLayout.astro';
+import LocationMap from '../components/LocationMap.jsx';
+---
+
+<AppLayout title="Notre Position">
+	<LocationMap client:only="react" />
+</AppLayout>

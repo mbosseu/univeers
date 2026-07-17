@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase.js';
-import { Lock, Unlock, Plus, Loader2, Calendar, MailOpen, AlertCircle, Heart, CalendarHeart, History } from 'lucide-react';
+import { Lock, Unlock, Plus, Loader2, Calendar, MailOpen, AlertCircle, Heart, CalendarHeart, History, MapPin } from 'lucide-react';
 
 const DURATION_OPTIONS = [
   { label: '2 minutes (Test) ⏱️', value: 2 * 60 },
@@ -442,6 +442,11 @@ export default function Capsules() {
         <a href="/souvenirs" className="nav-item">
           <div className="nav-icon"><History /></div>
           <span>Souvenirs</span>
+        </a>
+      
+        <a href="/location" className={"nav-item" + (window.location.pathname === '/location' ? ' active' : '')}>
+          <div className="nav-icon"><MapPin /></div>
+          <span>Position</span>
         </a>
       </nav>
     </div>

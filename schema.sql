@@ -21,7 +21,11 @@ CREATE TABLE IF NOT EXISTS public.profiles (
     email TEXT NOT NULL,
     display_name TEXT,
     avatar_url TEXT,
+    flame_color TEXT DEFAULT 'default',
     couple_id UUID REFERENCES public.couples(id) ON DELETE SET NULL,
+    latitude FLOAT,
+    longitude FLOAT,
+    location_updated_at TIMESTAMP WITH TIME ZONE,
     love_language TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
@@ -270,4 +274,4 @@ CREATE TABLE IF NOT EXISTS public.push_subscriptions (
 ALTER TABLE public.push_subscriptions DISABLE ROW LEVEL SECURITY;
 
 -- 16. HABILITER LE TEMPS RÉEL (REALTIME) POUR L'APPLICATION
-alter publication supabase_realtime add table public.messages, public.couples, public.daily_responses, public.quest_attempts, public.souvenirs, public.couple_goals, public.sweet_notes, public.evening_reflections, public.time_capsules;
+alter publication supabase_realtime add table public.profiles, public.messages, public.couples, public.daily_responses, public.quest_attempts, public.souvenirs, public.couple_goals, public.sweet_notes, public.evening_reflections, public.time_capsules;

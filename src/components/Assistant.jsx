@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase.js';
-import { Sparkles, Send, Copy, ArrowLeft, Loader2, MessageSquare, Heart, RefreshCw, CalendarHeart, History } from 'lucide-react';
+import { Sparkles, Send, Copy, ArrowLeft, Loader2, MessageSquare, Heart, RefreshCw, CalendarHeart, History, MapPin } from 'lucide-react';
 
 const CATEGORIES = [
   { id: 'letter', label: 'Lettre d\'amour 📝', prompt: 'Rédige une lettre d\'amour chaleureuse et sincère' },
@@ -284,6 +284,11 @@ export default function Assistant() {
         <a href="/souvenirs" className="nav-item">
           <div className="nav-icon"><History /></div>
           <span>Souvenirs</span>
+        </a>
+      
+        <a href="/location" className={"nav-item" + (window.location.pathname === '/location' ? ' active' : '')}>
+          <div className="nav-icon"><MapPin /></div>
+          <span>Position</span>
         </a>
       </nav>
     </div>
