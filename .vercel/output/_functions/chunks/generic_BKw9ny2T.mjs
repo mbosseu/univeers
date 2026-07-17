@@ -1,10 +1,40 @@
 import { t as __exportAll } from "./rolldown-runtime_D7D4PA-g.mjs";
-import { $ as AstroError, O as MissingGetFontFileRequestUrl, S as InvalidImageService, V as RemoteImageNotAllowed, _ as ImageMissingAlt, c as ExpectedImageOptions, d as FontFamilyNotFound, l as ExpectedNotESMImage, s as ExpectedImage } from "./errors-data_sKwIzwfZ.mjs";
-import { _ as fetchWithRedirects, c as isRemotePath, g as inferRemoteSize$1, y as isRemoteAllowed } from "./path_CGJL23ln.mjs";
-import { a as DEFAULT_HASH_PROPS, c as resolveSrc, i as resolveDefaultOutputFormat, n as isLocalService, o as isESMImportedImage, s as isRemoteImage } from "./service_DvWGrLS3.mjs";
-import { S as unescapeHTML, g as addAttribute, m as maybeRenderHead, t as spreadAttributes, u as renderTemplate, w as createAstro } from "./server_DaiMCY8D.mjs";
-import { t as createComponent } from "./compiler_eBKWP4FC.mjs";
+import { A as FontFamilyNotFound, D as ExpectedImage, I as ImageMissingAlt, O as ExpectedImageOptions, R as InvalidComponentArgs, V as InvalidImageService, _ as fetchWithRedirects, c as isRemotePath, g as inferRemoteSize$1, k as ExpectedNotESMImage, ot as RemoteImageNotAllowed, q as MissingGetFontFileRequestUrl, vt as AstroError, y as isRemoteAllowed } from "./path_JcdHq8sq.mjs";
+import { a as DEFAULT_HASH_PROPS, c as resolveSrc, i as resolveDefaultOutputFormat, n as isLocalService, o as isESMImportedImage, s as isRemoteImage } from "./service_yb3FV_BB.mjs";
+import { l as renderTemplate, m as addAttribute, p as maybeRenderHead, t as spreadAttributes, x as createAstro, y as unescapeHTML } from "./server_DY7b0X9O.mjs";
 import * as mime from "mrmime";
+//#region node_modules/astro/dist/runtime/server/astro-component.js
+function validateArgs(args) {
+	if (args.length !== 3) return false;
+	if (!args[0] || typeof args[0] !== "object") return false;
+	return true;
+}
+function baseCreateComponent(cb, moduleId, propagation) {
+	const name = moduleId?.split("/").pop()?.replace(".astro", "") ?? "";
+	const fn = (...args) => {
+		if (!validateArgs(args)) throw new AstroError({
+			...InvalidComponentArgs,
+			message: InvalidComponentArgs.message(name)
+		});
+		return cb(...args);
+	};
+	Object.defineProperty(fn, "name", {
+		value: name,
+		writable: false
+	});
+	fn.isAstroComponentFactory = true;
+	fn.moduleId = moduleId;
+	fn.propagation = propagation;
+	return fn;
+}
+function createComponentWithOptions(opts) {
+	return baseCreateComponent(opts.factory, opts.moduleId, opts.propagation);
+}
+function createComponent(arg1, moduleId, propagation) {
+	if (typeof arg1 === "function") return baseCreateComponent(arg1, moduleId, propagation);
+	else return createComponentWithOptions(arg1);
+}
+//#endregion
 //#region node_modules/astro/dist/assets/layout.js
 var DEFAULT_RESOLUTIONS = [
 	640,
@@ -80,7 +110,7 @@ var cssFitValues = [
 ];
 async function getConfiguredImageService() {
 	if (!globalThis?.astroAsset?.imageService) {
-		const { default: service } = await import("./sharp_DObHJDIj.mjs").catch((e) => {
+		const { default: service } = await import("./sharp_CDoBJrzf.mjs").catch((e) => {
 			const error = new AstroError(InvalidImageService);
 			error.cause = e;
 			throw error;

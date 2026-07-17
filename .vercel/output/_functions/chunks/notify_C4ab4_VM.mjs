@@ -2,7 +2,10 @@ import { t as __exportAll } from "./rolldown-runtime_D7D4PA-g.mjs";
 import webpush from "web-push";
 import { createClient } from "@supabase/supabase-js";
 //#region src/pages/api/notify.js
-var notify_exports = /* @__PURE__ */ __exportAll({ POST: () => POST });
+var notify_exports = /* @__PURE__ */ __exportAll({
+	POST: () => POST,
+	prerender: () => false
+});
 webpush.setVapidDetails("mailto:contact@univers.com", void 0, void 0);
 var POST = async ({ request }) => {
 	try {

@@ -1,6 +1,5 @@
-import { $ as AstroError, B as PrerenderDynamicEndpointPathCollide, D as MiddlewareNotAResponse, E as MiddlewareNoDataOrNextCalled, G as SessionStorageInitError, H as ReservedSlotName, I as NoMatchingStaticPathFound, J as UnableToLoadLogger, K as SessionStorageSaveError, Q as i18nNoLocaleFoundInPath, R as PageNumberParamNotFound, T as LocalsReassigned, U as ResponseSentError, W as RewriteWithBodyUsed, a as ClientAddressNotAvailable, b as InvalidGetStaticPathsEntry, g as GetStaticPathsRequired, h as GetStaticPathsInvalidRouteParam, i as CacheNotEnabled, m as GetStaticPathsExpectedParams, n as ActionsReturnedInvalidDataError, p as ForbiddenRewrite, q as StaticClientAddressNotAvailable, r as AstroResponseHeadersReassigned, t as ActionNotFoundError, w as LocalsNotAnObject, x as InvalidGetStaticPathsReturn, z as PrerenderClientAddressNotAvailable } from "./chunks/errors-data_sKwIzwfZ.mjs";
-import { a as fileExtension, b as matchPattern, d as removeLeadingForwardSlash, h as trimSlashes, i as collapseDuplicateTrailingSlashes, l as joinPaths, m as slash, n as collapseDuplicateLeadingSlashes, o as hasFileExtension, p as removeTrailingForwardSlash, r as collapseDuplicateSlashes, s as isInternalPath, t as appendForwardSlash, u as prependForwardSlash } from "./chunks/path_CGJL23ln.mjs";
-import { A as REDIRECT_STATUS_CODES, C as renderEndpoint, D as ASTRO_ERROR_HEADER, E as isRoute500, F as originPathnameSymbol, I as pipelineSymbol, L as responseSentSymbol$1, M as appSymbol, N as clientAddressSymbol, O as ASTRO_GENERATOR, P as fetchStateSymbol, T as isRoute404, a as chunkToString, b as pushDirective, c as renderSlotToString, d as decodeKey, f as decryptString, i as renderComponent, j as REROUTABLE_STATUS_CODES, k as DEFAULT_404_COMPONENT, l as isRenderTemplateResult, n as renderPage, o as createSlotValueFromString, p as generateCspDigest, r as renderJSX, u as renderTemplate, v as isRenderInstruction, x as isAstroComponentFactory, y as normalizeCspResourceEntry } from "./chunks/server_DaiMCY8D.mjs";
+import { B as InvalidGetStaticPathsReturn, C as AstroResponseHeadersReassigned, F as GetStaticPathsRequired, G as MiddlewareNoDataOrNextCalled, K as MiddlewareNotAResponse, M as ForbiddenRewrite, N as GetStaticPathsExpectedParams, P as GetStaticPathsInvalidRouteParam, S as ActionsReturnedInvalidDataError, T as ClientAddressNotAvailable, U as LocalsNotAnObject, W as LocalsReassigned, _t as i18nNoLocaleFoundInPath, a as fileExtension, at as PrerenderDynamicEndpointPathCollide, b as matchPattern, ct as ResponseSentError, d as removeLeadingForwardSlash, dt as SessionStorageSaveError, ft as StaticClientAddressNotAvailable, h as trimSlashes, i as collapseDuplicateTrailingSlashes, it as PrerenderClientAddressNotAvailable, l as joinPaths, lt as RewriteWithBodyUsed, m as slash, n as collapseDuplicateLeadingSlashes, o as hasFileExtension, p as removeTrailingForwardSlash, pt as UnableToLoadLogger, r as collapseDuplicateSlashes, rt as PageNumberParamNotFound, s as isInternalPath, st as ReservedSlotName, t as appendForwardSlash, tt as NoMatchingStaticPathFound, u as prependForwardSlash, ut as SessionStorageInitError, vt as AstroError, w as CacheNotEnabled, x as ActionNotFoundError, z as InvalidGetStaticPathsEntry } from "./chunks/path_JcdHq8sq.mjs";
+import { A as clientAddressSymbol, C as isRoute500, D as REDIRECT_STATUS_CODES, E as DEFAULT_404_COMPONENT, M as originPathnameSymbol, N as pipelineSymbol, O as REROUTABLE_STATUS_CODES, P as responseSentSymbol$1, S as isRoute404, T as ASTRO_GENERATOR, _ as pushDirective, a as chunkToString, b as renderEndpoint, c as isRenderTemplateResult, d as decryptString, f as generateCspDigest, g as normalizeCspResourceEntry, h as isRenderInstruction, i as renderComponent, j as fetchStateSymbol, k as appSymbol, l as renderTemplate, n as renderPage, o as createSlotValueFromString, r as renderJSX, s as renderSlotToString, u as decodeKey, v as isAstroComponentFactory, w as ASTRO_ERROR_HEADER } from "./chunks/server_DY7b0X9O.mjs";
 import nodePath from "node:path";
 import "@vercel/routing-utils";
 import colors from "piccolore";
@@ -9,8 +8,6 @@ import "es-module-lexer";
 import { parse as parse$1, serialize } from "cookie";
 import { escape } from "html-escaper";
 import { createStorage } from "unstorage";
-import React, { createElement } from "react";
-import ReactDOM from "react-dom/server";
 nodePath.posix.join;
 //#endregion
 //#region node_modules/@astrojs/vercel/dist/index.js
@@ -21,7 +18,7 @@ var ASTRO_LOCALS_HEADER = "x-astro-locals";
 var ASTRO_MIDDLEWARE_SECRET_HEADER = "x-astro-middleware-secret";
 //#endregion
 //#region \0virtual:astro-vercel:config
-var middlewareSecret = "7e28090d-a7f8-4dda-81cd-6f3229542c5c";
+var middlewareSecret = "c0a3042d-de6a-493d-b0b1-1e61ef01b3d1";
 //#endregion
 //#region node_modules/astro/dist/actions/consts.js
 var ACTION_QUERY_PARAMS = {
@@ -310,7 +307,7 @@ async function parseRequestBody(request, bodySizeLimit) {
 		message: `Request body exceeds ${bodySizeLimit} bytes`
 	});
 	try {
-		if (hasContentType(contentType, formContentTypes$1)) {
+		if (hasContentType(contentType, formContentTypes)) {
 			if (!hasContentLength) {
 				const body = await readBodyWithLimit(request.clone(), bodySizeLimit);
 				return await new Request(request.url, {
@@ -340,7 +337,7 @@ async function parseRequestBody(request, bodySizeLimit) {
 	throw new TypeError("Unsupported content type");
 }
 var ACTION_API_CONTEXT_SYMBOL = /* @__PURE__ */ Symbol.for("astro.actionAPIContext");
-var formContentTypes$1 = ["application/x-www-form-urlencoded", "multipart/form-data"];
+var formContentTypes = ["application/x-www-form-urlencoded", "multipart/form-data"];
 function hasContentType(contentType, expected) {
 	const type = contentType.split(";")[0].toLowerCase();
 	return expected.some((t) => type === t);
@@ -5107,195 +5104,8 @@ function deserializeRouteInfo(rawRouteInfo) {
 	};
 }
 //#endregion
-//#region \0astro:react:opts
-var _astro_react_opts_default = {
-	experimentalReactChildren: false,
-	experimentalDisableStreaming: false
-};
-//#endregion
-//#region node_modules/@astrojs/react/dist/context.js
-var contexts = /* @__PURE__ */ new WeakMap();
-var ID_PREFIX = "r";
-function getContext(rendererContextResult) {
-	if (contexts.has(rendererContextResult)) return contexts.get(rendererContextResult);
-	const ctx = {
-		currentIndex: 0,
-		get id() {
-			return ID_PREFIX + this.currentIndex.toString();
-		}
-	};
-	contexts.set(rendererContextResult, ctx);
-	return ctx;
-}
-function incrementId(rendererContextResult) {
-	const ctx = getContext(rendererContextResult);
-	const id = ctx.id;
-	ctx.currentIndex++;
-	return id;
-}
-//#endregion
-//#region node_modules/@astrojs/react/dist/static-html.js
-var StaticHtml = ({ value, name, hydrate = true }) => {
-	if (!value) return null;
-	return createElement(hydrate ? "astro-slot" : "astro-static-slot", {
-		name,
-		suppressHydrationWarning: true,
-		dangerouslySetInnerHTML: { __html: value }
-	});
-};
-StaticHtml.shouldComponentUpdate = () => false;
-var static_html_default = StaticHtml;
-//#endregion
-//#region node_modules/@astrojs/react/dist/server.js
-var slotName = (str) => str.trim().replace(/[-_]([a-z])/g, (_, w) => w.toUpperCase());
-var reactTypeof = Symbol.for("react.element");
-var reactTransitionalTypeof = Symbol.for("react.transitional.element");
-async function check(Component, props, children) {
-	if (typeof Component === "object") return Component["$$typeof"].toString().slice(7).startsWith("react");
-	if (typeof Component !== "function") return false;
-	if (Component.name === "QwikComponent") return false;
-	if (typeof Component === "function" && Component["$$typeof"] === Symbol.for("react.forward_ref")) return false;
-	if (Component.prototype != null && typeof Component.prototype.render === "function") return React.Component.isPrototypeOf(Component) || React.PureComponent.isPrototypeOf(Component);
-	let isReactComponent = false;
-	function Tester(...args) {
-		try {
-			const vnode = Component(...args);
-			if (vnode && (vnode["$$typeof"] === reactTypeof || vnode["$$typeof"] === reactTransitionalTypeof)) isReactComponent = true;
-		} catch {}
-		return React.createElement("div");
-	}
-	await renderToStaticMarkup.call(this, Tester, props, children);
-	return isReactComponent;
-}
-async function getNodeWritable() {
-	let { Writable } = await import(
-		/* @vite-ignore */
-		"node:stream"
-);
-	return Writable;
-}
-function needsHydration(metadata) {
-	return metadata?.astroStaticSlot ? !!metadata.hydrate : true;
-}
-async function renderToStaticMarkup(Component, props, { default: children, ...slotted }, metadata) {
-	let prefix;
-	if (this && this.result) prefix = incrementId(this.result);
-	const attrs = { prefix };
-	delete props["class"];
-	const slots = {};
-	for (const [key, value] of Object.entries(slotted)) {
-		const name = slotName(key);
-		slots[name] = React.createElement(static_html_default, {
-			hydrate: needsHydration(metadata),
-			value,
-			name
-		});
-	}
-	const newProps = {
-		...props,
-		...slots
-	};
-	const newChildren = children ?? props.children;
-	if (children && _astro_react_opts_default.experimentalReactChildren) {
-		attrs["data-react-children"] = true;
-		newProps.children = (await import("./chunks/vnode-children_B6vVcKTz.mjs").then((mod) => mod.default))(children);
-	} else if (newChildren != null) newProps.children = React.createElement(static_html_default, {
-		hydrate: needsHydration(metadata),
-		value: newChildren
-	});
-	const formState = this ? await getFormState(this) : void 0;
-	if (formState) {
-		attrs["data-action-result"] = JSON.stringify(formState[0]);
-		attrs["data-action-key"] = formState[1];
-		attrs["data-action-name"] = formState[2];
-	}
-	const vnode = React.createElement(Component, newProps);
-	const renderOptions = {
-		identifierPrefix: prefix,
-		formState
-	};
-	let html;
-	if (_astro_react_opts_default.experimentalDisableStreaming) html = ReactDOM.renderToString(vnode);
-	else if ("renderToReadableStream" in ReactDOM) html = await renderToReadableStreamAsync(vnode, renderOptions);
-	else html = await renderToPipeableStreamAsync(vnode, renderOptions);
-	return {
-		html,
-		attrs
-	};
-}
-async function getFormState({ result }) {
-	const { request, actionResult } = result;
-	if (!actionResult) return void 0;
-	if (!isFormRequest(request.headers.get("content-type"))) return void 0;
-	const { searchParams } = new URL(request.url);
-	const actionKey = (await request.clone().formData()).get("$ACTION_KEY")?.toString();
-	const actionName = searchParams.get("_action");
-	if (!actionKey || !actionName) return void 0;
-	return [
-		actionResult,
-		actionKey,
-		actionName
-	];
-}
-async function renderToPipeableStreamAsync(vnode, options) {
-	const Writable = await getNodeWritable();
-	let html = "";
-	return new Promise((resolve, reject) => {
-		let error = void 0;
-		let stream = ReactDOM.renderToPipeableStream(vnode, {
-			...options,
-			onError(err) {
-				error = err;
-				reject(error);
-			},
-			onAllReady() {
-				stream.pipe(new Writable({
-					write(chunk, _encoding, callback) {
-						html += chunk.toString("utf-8");
-						callback();
-					},
-					destroy() {
-						resolve(html);
-					}
-				}));
-			}
-		});
-	});
-}
-async function readResult(stream) {
-	const reader = stream.getReader();
-	let result = "";
-	const decoder = new TextDecoder("utf-8");
-	while (true) {
-		const { done, value } = await reader.read();
-		if (done) {
-			if (value) result += decoder.decode(value);
-			else decoder.decode(/* @__PURE__ */ new Uint8Array());
-			return result;
-		}
-		result += decoder.decode(value, { stream: true });
-	}
-}
-async function renderToReadableStreamAsync(vnode, options) {
-	return await readResult(await ReactDOM.renderToReadableStream(vnode, options));
-}
-var formContentTypes = ["application/x-www-form-urlencoded", "multipart/form-data"];
-function isFormRequest(contentType) {
-	const type = contentType?.split(";")[0].toLowerCase();
-	return formContentTypes.some((t) => type === t);
-}
-//#endregion
 //#region \0virtual:astro:renderers
-var renderers = [Object.assign({
-	"name": "@astrojs/react",
-	"clientEntrypoint": "@astrojs/react/client.js",
-	"serverEntrypoint": "@astrojs/react/server.js"
-}, { ssr: {
-	name: "@astrojs/react",
-	check,
-	renderToStaticMarkup,
-	supportsAstroStaticSlot: true
-} })];
+var renderers = [];
 [
 	{
 		"file": "",
@@ -5378,339 +5188,16 @@ var renderers = [Object.assign({
 			"origin": "project",
 			"_meta": { "trailingSlash": "ignore" }
 		}
-	},
-	{
-		"file": "",
-		"links": [],
-		"scripts": [],
-		"styles": [],
-		"routeData": {
-			"route": "/assistant",
-			"isIndex": false,
-			"type": "page",
-			"pattern": "^\\/assistant\\/?$",
-			"segments": [[{
-				"content": "assistant",
-				"dynamic": false,
-				"spread": false
-			}]],
-			"params": [],
-			"component": "src/pages/assistant.astro",
-			"pathname": "/assistant",
-			"prerender": false,
-			"fallbackRoutes": [],
-			"distURL": [],
-			"origin": "project",
-			"_meta": { "trailingSlash": "ignore" }
-		}
-	},
-	{
-		"file": "",
-		"links": [],
-		"scripts": [],
-		"styles": [],
-		"routeData": {
-			"route": "/badges",
-			"isIndex": false,
-			"type": "page",
-			"pattern": "^\\/badges\\/?$",
-			"segments": [[{
-				"content": "badges",
-				"dynamic": false,
-				"spread": false
-			}]],
-			"params": [],
-			"component": "src/pages/badges.astro",
-			"pathname": "/badges",
-			"prerender": false,
-			"fallbackRoutes": [],
-			"distURL": [],
-			"origin": "project",
-			"_meta": { "trailingSlash": "ignore" }
-		}
-	},
-	{
-		"file": "",
-		"links": [],
-		"scripts": [],
-		"styles": [],
-		"routeData": {
-			"route": "/capsules",
-			"isIndex": false,
-			"type": "page",
-			"pattern": "^\\/capsules\\/?$",
-			"segments": [[{
-				"content": "capsules",
-				"dynamic": false,
-				"spread": false
-			}]],
-			"params": [],
-			"component": "src/pages/capsules.astro",
-			"pathname": "/capsules",
-			"prerender": false,
-			"fallbackRoutes": [],
-			"distURL": [],
-			"origin": "project",
-			"_meta": { "trailingSlash": "ignore" }
-		}
-	},
-	{
-		"file": "",
-		"links": [],
-		"scripts": [],
-		"styles": [],
-		"routeData": {
-			"route": "/dashboard",
-			"isIndex": false,
-			"type": "page",
-			"pattern": "^\\/dashboard\\/?$",
-			"segments": [[{
-				"content": "dashboard",
-				"dynamic": false,
-				"spread": false
-			}]],
-			"params": [],
-			"component": "src/pages/dashboard.astro",
-			"pathname": "/dashboard",
-			"prerender": false,
-			"fallbackRoutes": [],
-			"distURL": [],
-			"origin": "project",
-			"_meta": { "trailingSlash": "ignore" }
-		}
-	},
-	{
-		"file": "",
-		"links": [],
-		"scripts": [],
-		"styles": [],
-		"routeData": {
-			"route": "/journal",
-			"isIndex": false,
-			"type": "page",
-			"pattern": "^\\/journal\\/?$",
-			"segments": [[{
-				"content": "journal",
-				"dynamic": false,
-				"spread": false
-			}]],
-			"params": [],
-			"component": "src/pages/journal.astro",
-			"pathname": "/journal",
-			"prerender": false,
-			"fallbackRoutes": [],
-			"distURL": [],
-			"origin": "project",
-			"_meta": { "trailingSlash": "ignore" }
-		}
-	},
-	{
-		"file": "",
-		"links": [],
-		"scripts": [],
-		"styles": [],
-		"routeData": {
-			"route": "/love-languages",
-			"isIndex": false,
-			"type": "page",
-			"pattern": "^\\/love-languages\\/?$",
-			"segments": [[{
-				"content": "love-languages",
-				"dynamic": false,
-				"spread": false
-			}]],
-			"params": [],
-			"component": "src/pages/love-languages.astro",
-			"pathname": "/love-languages",
-			"prerender": false,
-			"fallbackRoutes": [],
-			"distURL": [],
-			"origin": "project",
-			"_meta": { "trailingSlash": "ignore" }
-		}
-	},
-	{
-		"file": "",
-		"links": [],
-		"scripts": [],
-		"styles": [],
-		"routeData": {
-			"route": "/messages",
-			"isIndex": false,
-			"type": "page",
-			"pattern": "^\\/messages\\/?$",
-			"segments": [[{
-				"content": "messages",
-				"dynamic": false,
-				"spread": false
-			}]],
-			"params": [],
-			"component": "src/pages/messages.astro",
-			"pathname": "/messages",
-			"prerender": false,
-			"fallbackRoutes": [],
-			"distURL": [],
-			"origin": "project",
-			"_meta": { "trailingSlash": "ignore" }
-		}
-	},
-	{
-		"file": "",
-		"links": [],
-		"scripts": [],
-		"styles": [],
-		"routeData": {
-			"route": "/onboarding",
-			"isIndex": false,
-			"type": "page",
-			"pattern": "^\\/onboarding\\/?$",
-			"segments": [[{
-				"content": "onboarding",
-				"dynamic": false,
-				"spread": false
-			}]],
-			"params": [],
-			"component": "src/pages/onboarding.astro",
-			"pathname": "/onboarding",
-			"prerender": false,
-			"fallbackRoutes": [],
-			"distURL": [],
-			"origin": "project",
-			"_meta": { "trailingSlash": "ignore" }
-		}
-	},
-	{
-		"file": "",
-		"links": [],
-		"scripts": [],
-		"styles": [],
-		"routeData": {
-			"route": "/rituals",
-			"isIndex": false,
-			"type": "page",
-			"pattern": "^\\/rituals\\/?$",
-			"segments": [[{
-				"content": "rituals",
-				"dynamic": false,
-				"spread": false
-			}]],
-			"params": [],
-			"component": "src/pages/rituals.astro",
-			"pathname": "/rituals",
-			"prerender": false,
-			"fallbackRoutes": [],
-			"distURL": [],
-			"origin": "project",
-			"_meta": { "trailingSlash": "ignore" }
-		}
-	},
-	{
-		"file": "",
-		"links": [],
-		"scripts": [],
-		"styles": [],
-		"routeData": {
-			"route": "/settings",
-			"isIndex": false,
-			"type": "page",
-			"pattern": "^\\/settings\\/?$",
-			"segments": [[{
-				"content": "settings",
-				"dynamic": false,
-				"spread": false
-			}]],
-			"params": [],
-			"component": "src/pages/settings.astro",
-			"pathname": "/settings",
-			"prerender": false,
-			"fallbackRoutes": [],
-			"distURL": [],
-			"origin": "project",
-			"_meta": { "trailingSlash": "ignore" }
-		}
-	},
-	{
-		"file": "",
-		"links": [],
-		"scripts": [],
-		"styles": [],
-		"routeData": {
-			"route": "/souvenirs",
-			"isIndex": false,
-			"type": "page",
-			"pattern": "^\\/souvenirs\\/?$",
-			"segments": [[{
-				"content": "souvenirs",
-				"dynamic": false,
-				"spread": false
-			}]],
-			"params": [],
-			"component": "src/pages/souvenirs.astro",
-			"pathname": "/souvenirs",
-			"prerender": false,
-			"fallbackRoutes": [],
-			"distURL": [],
-			"origin": "project",
-			"_meta": { "trailingSlash": "ignore" }
-		}
-	},
-	{
-		"file": "",
-		"links": [],
-		"scripts": [],
-		"styles": [],
-		"routeData": {
-			"route": "/",
-			"isIndex": true,
-			"type": "page",
-			"pattern": "^\\/$",
-			"segments": [],
-			"params": [],
-			"component": "src/pages/index.astro",
-			"pathname": "/",
-			"prerender": false,
-			"fallbackRoutes": [],
-			"distURL": [],
-			"origin": "project",
-			"_meta": { "trailingSlash": "ignore" }
-		}
 	}
 ].map(deserializeRouteInfo);
 //#endregion
 //#region \0virtual:astro:pages
-var _page0 = () => import("./chunks/generic_uqUCs2jL.mjs");
-var _page1 = () => import("./chunks/notify_DD-K0lkY.mjs");
-var _page2 = () => import("./chunks/assistant_BzjgvnGH.mjs");
-var _page3 = () => import("./chunks/badges_DwBnQKq7.mjs");
-var _page4 = () => import("./chunks/capsules_CSv2Q7G6.mjs");
-var _page5 = () => import("./chunks/dashboard_DOHV3S50.mjs");
-var _page6 = () => import("./chunks/journal_D9LS3MIr.mjs");
-var _page7 = () => import("./chunks/love-languages_B5Dpw5RF.mjs");
-var _page8 = () => import("./chunks/messages_kAYtrZHS.mjs");
-var _page9 = () => import("./chunks/onboarding_O8oiAPC2.mjs");
-var _page10 = () => import("./chunks/rituals_DKyWMAyH.mjs");
-var _page11 = () => import("./chunks/settings_CsMHj05R.mjs");
-var _page12 = () => import("./chunks/souvenirs_CGGrCGEP.mjs");
-var _page13 = () => import("./chunks/index_CC21kFaH.mjs");
-var pageMap = /* @__PURE__ */ new Map([
-	["node_modules/astro/dist/assets/endpoint/generic.js", _page0],
-	["src/pages/api/notify.js", _page1],
-	["src/pages/assistant.astro", _page2],
-	["src/pages/badges.astro", _page3],
-	["src/pages/capsules.astro", _page4],
-	["src/pages/dashboard.astro", _page5],
-	["src/pages/journal.astro", _page6],
-	["src/pages/love-languages.astro", _page7],
-	["src/pages/messages.astro", _page8],
-	["src/pages/onboarding.astro", _page9],
-	["src/pages/rituals.astro", _page10],
-	["src/pages/settings.astro", _page11],
-	["src/pages/souvenirs.astro", _page12],
-	["src/pages/index.astro", _page13]
-]);
+var _page0 = () => import("./chunks/generic_BKw9ny2T.mjs");
+var _page1 = () => import("./chunks/notify_C4ab4_VM.mjs");
+var pageMap = /* @__PURE__ */ new Map([["node_modules/astro/dist/assets/endpoint/generic.js", _page0], ["src/pages/api/notify.js", _page1]]);
 //#endregion
 //#region \0virtual:astro:manifest
-var _manifest = deserializeManifest({"rootDir":"file:///C:/Users/PC/Desktop/univers/","cacheDir":"file:///C:/Users/PC/Desktop/univers/node_modules/.astro/","outDir":"file:///C:/Users/PC/Desktop/univers/dist/","srcDir":"file:///C:/Users/PC/Desktop/univers/src/","publicDir":"file:///C:/Users/PC/Desktop/univers/public/","buildClientDir":"file:///C:/Users/PC/Desktop/univers/dist/client/","buildServerDir":"file:///C:/Users/PC/Desktop/univers/dist/server/","adapterName":"@astrojs/vercel","assetsDir":"_astro","routes":[{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"type":"page","component":"_server-islands.astro","params":["name"],"segments":[[{"content":"_server-islands","dynamic":false,"spread":false}],[{"content":"name","dynamic":true,"spread":false}]],"pattern":"^\\/_server-islands\\/([^/]+?)\\/?$","prerender":false,"isIndex":false,"fallbackRoutes":[],"route":"/_server-islands/[name]","origin":"internal","distURL":[],"_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/_image","component":"node_modules/astro/dist/assets/endpoint/generic.js","params":[],"pathname":"/_image","pattern":"^\\/_image\\/?$","segments":[[{"content":"_image","dynamic":false,"spread":false}]],"type":"endpoint","prerender":false,"fallbackRoutes":[],"distURL":[],"isIndex":false,"origin":"internal","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/api/notify","isIndex":false,"type":"endpoint","pattern":"^\\/api\\/notify\\/?$","segments":[[{"content":"api","dynamic":false,"spread":false}],[{"content":"notify","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/api/notify.js","pathname":"/api/notify","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[{"type":"external","src":"_astro/AppLayout.BCC_VYdx.css"},{"type":"inline","content":".category-btn{transition:all .2s!important}.category-btn:hover{transform:translateY(-2px);border-color:var(--color-primary)!important;background-color:#a91b2205!important}.category-btn.active{transform:translateY(0);border-color:var(--color-primary)!important;background-color:#a91b2214!important}.output-section h4{color:var(--color-text);margin:0;font-size:1.1rem;font-weight:700}.actions-row button{box-shadow:none!important}.actions-row button:hover{box-shadow:var(--shadow-sm)!important;transform:translateY(-2px)!important}\n"}],"routeData":{"route":"/assistant","isIndex":false,"type":"page","pattern":"^\\/assistant\\/?$","segments":[[{"content":"assistant","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/assistant.astro","pathname":"/assistant","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[{"type":"external","src":"_astro/AppLayout.BCC_VYdx.css"},{"type":"inline","content":".badge-card-item{border-radius:var(--radius-lg);transition:all .3s cubic-bezier(.25,.8,.25,1)}.badge-card-item.unlocked:hover{box-shadow:var(--shadow-md);transform:translateY(-4px);border-color:#2e7d324d!important}.badge-card-item.locked{border:1px dashed #a91b221a!important}\n"}],"routeData":{"route":"/badges","isIndex":false,"type":"page","pattern":"^\\/badges\\/?$","segments":[[{"content":"badges","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/badges.astro","pathname":"/badges","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[{"type":"external","src":"_astro/AppLayout.BCC_VYdx.css"},{"type":"inline","content":".capsule-card{border-radius:var(--radius-lg);transition:all .3s cubic-bezier(.25,.8,.25,1)}.capsule-card.unlocked{background-color:var(--color-white);box-shadow:var(--shadow-sm)}.capsule-card.unlocked:hover{box-shadow:var(--shadow-lg);transform:translateY(-4px);border-color:#2e7d3266!important}.capsule-card.locked{background-color:#a91b2203;border:1px dashed #a91b2226!important}.info-badge{line-height:1.4}.letter-modal{box-shadow:0 25px 50px -12px #00000040!important}.letter-body::-webkit-scrollbar{width:4px}.letter-body::-webkit-scrollbar-track{background:0 0}.letter-body::-webkit-scrollbar-thumb{background:#a91b2233;border-radius:4px}\n"}],"routeData":{"route":"/capsules","isIndex":false,"type":"page","pattern":"^\\/capsules\\/?$","segments":[[{"content":"capsules","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/capsules.astro","pathname":"/capsules","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[{"type":"external","src":"_astro/AppLayout.BCC_VYdx.css"},{"type":"external","src":"_astro/dashboard.BJ3Z4SM3.css"}],"routeData":{"route":"/dashboard","isIndex":false,"type":"page","pattern":"^\\/dashboard\\/?$","segments":[[{"content":"dashboard","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/dashboard.astro","pathname":"/dashboard","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[{"type":"external","src":"_astro/AppLayout.BCC_VYdx.css"},{"type":"inline","content":"@keyframes bounce{0%,to{transform:translateY(0)}50%{transform:translateY(-4px)}}\n"}],"routeData":{"route":"/journal","isIndex":false,"type":"page","pattern":"^\\/journal\\/?$","segments":[[{"content":"journal","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/journal.astro","pathname":"/journal","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[{"type":"external","src":"_astro/AppLayout.BCC_VYdx.css"},{"type":"inline","content":".option-select-btn{transition:all .2s cubic-bezier(.25,.8,.25,1)!important}.option-select-btn:hover{transform:translateY(-2px);border-color:var(--color-primary)!important;box-shadow:var(--shadow-sm)!important;background-color:#a91b2208!important}.option-select-btn:active{transform:translateY(0)}\n"}],"routeData":{"route":"/love-languages","isIndex":false,"type":"page","pattern":"^\\/love-languages\\/?$","segments":[[{"content":"love-languages","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/love-languages.astro","pathname":"/love-languages","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[{"type":"external","src":"_astro/AppLayout.BCC_VYdx.css"},{"type":"external","src":"_astro/messages.BnZy3JfM.css"}],"routeData":{"route":"/messages","isIndex":false,"type":"page","pattern":"^\\/messages\\/?$","segments":[[{"content":"messages","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/messages.astro","pathname":"/messages","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[{"type":"external","src":"_astro/AppLayout.BCC_VYdx.css"},{"type":"inline","content":".onboarding-container[data-astro-cid-kzxu644f]{flex-direction:column;width:100%;max-width:600px;min-height:100vh;margin:0 auto;padding:1.5rem;display:flex}.loading-screen[data-astro-cid-kzxu644f]{background-color:var(--color-background);z-index:1000;justify-content:center;align-items:center;width:100%;height:100%;display:flex;position:fixed;top:0;left:0}.spinner-container[data-astro-cid-kzxu644f]{color:var(--color-text-light);flex-direction:column;align-items:center;gap:1rem;font-weight:500;display:flex}.spinner[data-astro-cid-kzxu644f]{animation:1s linear infinite spin}@keyframes spin{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.top-nav[data-astro-cid-kzxu644f]{align-items:center;margin-bottom:2rem;display:flex}.back-btn[data-astro-cid-kzxu644f]{color:var(--color-text);border-radius:50%;justify-content:center;align-items:center;width:40px;height:40px;transition:background-color .2s;display:flex}.back-btn[data-astro-cid-kzxu644f]:hover{background-color:#a91b220d}.top-nav[data-astro-cid-kzxu644f] h2[data-astro-cid-kzxu644f]{text-align:center;flex-grow:1;margin:0 40px 0 0;font-size:2rem}.content[data-astro-cid-kzxu644f]{flex-direction:column;flex-grow:1;align-items:center;display:flex}.icon-wrapper[data-astro-cid-kzxu644f]{background-color:var(--color-white);box-shadow:var(--shadow-md);border-radius:50%;justify-content:center;align-items:center;margin-bottom:1.5rem;padding:1.5rem;display:flex}.main-title[data-astro-cid-kzxu644f]{color:var(--color-text);text-align:center;margin-bottom:.5rem;font-size:2.2rem}.description[data-astro-cid-kzxu644f]{text-align:center;color:var(--color-text-light);max-width:320px;margin-bottom:2.5rem}.code-section[data-astro-cid-kzxu644f],.input-section[data-astro-cid-kzxu644f]{flex-direction:column;gap:.5rem;width:100%;max-width:400px;display:flex}.code-section[data-astro-cid-kzxu644f] h3[data-astro-cid-kzxu644f],.input-section[data-astro-cid-kzxu644f] h3[data-astro-cid-kzxu644f]{color:var(--color-primary);margin-bottom:.2rem;font-size:1.1rem;font-weight:600}.code-display[data-astro-cid-kzxu644f]{background-color:var(--color-white);border-radius:var(--radius-md);box-shadow:var(--shadow-sm);border:1px solid #a91b2233;align-items:center;padding:.6rem;display:flex}.code[data-astro-cid-kzxu644f]{text-align:center;letter-spacing:2px;color:var(--color-text);flex-grow:1;font-family:monospace;font-size:1.3rem;font-weight:700}.btn-copy[data-astro-cid-kzxu644f]{border-radius:var(--radius-full);background-color:var(--color-primary);color:var(--color-white);align-items:center;gap:6px;padding:.5rem 1rem;font-size:.9rem;transition:all .2s;display:flex}.btn-copy[data-astro-cid-kzxu644f].copied{background-color:#2e7d32}.help-text[data-astro-cid-kzxu644f]{color:var(--color-text-light);text-align:center;margin-top:.5rem;font-size:.85rem;line-height:1.4}.divider[data-astro-cid-kzxu644f]{align-items:center;width:100%;max-width:400px;margin:2rem 0;display:flex}.divider[data-astro-cid-kzxu644f]:before,.divider[data-astro-cid-kzxu644f]:after{content:\"\";background-color:#a91b2226;flex-grow:1;height:1px}.divider[data-astro-cid-kzxu644f] span[data-astro-cid-kzxu644f]{color:var(--color-text-light);padding:0 1rem;font-size:.85rem;font-weight:700}.code-input[data-astro-cid-kzxu644f]{border-radius:var(--radius-md);text-align:center;letter-spacing:1px;background-color:var(--color-white);color:var(--color-text);border:1px solid #a91b2233;padding:1rem;font-family:monospace;font-size:1.1rem;font-weight:600}.code-input[data-astro-cid-kzxu644f]:focus{border-color:var(--color-primary);outline:none;box-shadow:0 0 0 3px #a91b221a}.join-btn[data-astro-cid-kzxu644f]{gap:8px;margin-top:.8rem}.join-btn[data-astro-cid-kzxu644f]:disabled{opacity:.7;cursor:not-allowed}.error-message[data-astro-cid-kzxu644f]{border-left:4px solid var(--color-primary);color:var(--color-primary);text-align:center;background-color:#a91b221a;border-radius:4px;margin:.5rem 0;padding:10px;font-size:.9rem;font-weight:500}.hidden[data-astro-cid-kzxu644f]{display:none!important}\n"}],"routeData":{"route":"/onboarding","isIndex":false,"type":"page","pattern":"^\\/onboarding\\/?$","segments":[[{"content":"onboarding","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/onboarding.astro","pathname":"/onboarding","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[{"type":"external","src":"_astro/AppLayout.BCC_VYdx.css"},{"type":"inline","content":".tabs-container{border-radius:var(--radius-full);background-color:#a91b220d;margin-top:1rem;padding:4px;display:flex}.tab-btn{color:var(--color-text-light);border-radius:var(--radius-full);box-shadow:none;background-color:#0000;border:none;flex:1;justify-content:center;align-items:center;gap:6px;padding:10px 0;font-size:.95rem;font-weight:600;transition:all .2s;display:flex}.tab-btn:hover{box-shadow:none;color:var(--color-primary);background-color:#a91b2208;transform:none}.tab-btn.active{background-color:var(--color-white);color:var(--color-primary);box-shadow:var(--shadow-sm)}.tab-intro{text-align:center;margin-bottom:1.5rem}.tab-intro h3{margin-bottom:.5rem}.tab-intro p{color:var(--color-text-light);font-size:.95rem;line-height:1.4}.quote-box{border-radius:var(--radius-lg);border-left:4px solid var(--color-primary);background-color:#a91b2205;margin-bottom:1rem;padding:1.5rem 2rem;position:relative}.quote-icon{font-family:var(--font-cursive);color:#a91b2226;font-size:3rem;line-height:1;position:absolute;top:-10px;left:10px}.quote-text{color:var(--color-text);margin:0;font-size:1.05rem;font-style:italic;line-height:1.5}.goal-input{border-radius:var(--radius-md);background-color:var(--color-background);width:100%;color:var(--color-text);font-size:1rem;font-family:var(--font-main);border:1px solid #a91b2233;padding:12px 16px}.goal-input:focus{border-color:var(--color-primary);outline:none;box-shadow:0 0 0 2px #a91b221a}.notes-list{flex-direction:column;gap:.8rem;max-height:300px;padding-right:4px;display:flex;overflow-y:auto}.note-bubble{border-radius:var(--radius-md);flex-direction:column;max-width:85%;padding:10px 14px;font-size:.95rem;line-height:1.4;display:flex;position:relative}.note-me{background-color:var(--color-primary);color:var(--color-white);border-bottom-right-radius:2px;align-self:flex-end}.note-me strong{color:#fffc!important}.note-partner{background-color:var(--color-white);color:var(--color-text);box-shadow:var(--shadow-sm);border:1px solid #a91b221a;border-bottom-left-radius:2px;align-self:flex-start}.note-bubble strong{color:var(--color-primary);margin-bottom:2px;font-size:.8rem}.note-bubble p{margin:0}.note-time{opacity:.7;align-self:flex-end;margin-top:4px;font-size:.7rem}.reflections-comparison{flex-direction:column;gap:1.5rem;display:flex}.comparison-row{flex-direction:column;gap:.6rem;display:flex}.comparison-row h5{color:var(--color-primary);margin:0;font-size:1rem;font-weight:700}.comparison-boxes{grid-template-columns:1fr 1fr;gap:1rem;display:grid}.comparison-box{border-radius:var(--radius-md);padding:12px;font-size:.95rem;line-height:1.4}.comparison-box.me{background-color:#a91b2208;border:1px dashed #a91b2226}.comparison-box.partner{background-color:#a91b220d;border:1px solid #a91b221a}.comparison-box strong{color:var(--color-primary);margin-bottom:4px;font-size:.85rem;display:block}.comparison-box p{margin:0}.waiting-box{text-align:center;border-radius:var(--radius-lg);background-color:#a91b2205;border:1px dashed #a91b2233;padding:2rem 1rem}.waiting-box p{color:var(--color-text-light);margin:0;font-size:.95rem;line-height:1.5}@media (width<=480px){.comparison-boxes{grid-template-columns:1fr;gap:.8rem}}\n"}],"routeData":{"route":"/rituals","isIndex":false,"type":"page","pattern":"^\\/rituals\\/?$","segments":[[{"content":"rituals","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/rituals.astro","pathname":"/rituals","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[{"type":"external","src":"_astro/AppLayout.BCC_VYdx.css"},{"type":"inline","content":".settings-link-row{transition:all .2s}.settings-link-row:hover{transform:translate(4px);background-color:#a91b220d!important;border-color:#a91b2226!important}\n"}],"routeData":{"route":"/settings","isIndex":false,"type":"page","pattern":"^\\/settings\\/?$","segments":[[{"content":"settings","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/settings.astro","pathname":"/settings","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[{"type":"external","src":"_astro/AppLayout.BCC_VYdx.css"},{"type":"inline","content":".souvenir-card{border:1px solid #a91b220d;flex-direction:column;display:flex}.souvenir-image{background-position:50%;background-size:cover;width:100%;height:200px;position:relative}.souvenir-emotion-badge{background-color:var(--color-white);width:40px;height:40px;box-shadow:var(--shadow-md);border-radius:50%;justify-content:center;align-items:center;font-size:1.5rem;display:flex;position:absolute;bottom:12px;right:12px}#souvenirs-map{border:1px solid #a91b221a;box-shadow:inset 0 1px 3px #0000001a}.custom-pin{filter:drop-shadow(0 2px 3px #0000004d)}.emotions-picker{gap:8px;width:100%;display:flex}.emotion-btn{flex:1;transition:all .2s!important}.emotion-btn:hover{transform:scale(1.1);border-color:var(--color-primary)!important;background-color:#a91b2208!important}.emotion-btn.active{transform:scale(1.1);border-color:var(--color-primary)!important;background-color:#a91b2214!important}\n"}],"routeData":{"route":"/souvenirs","isIndex":false,"type":"page","pattern":"^\\/souvenirs\\/?$","segments":[[{"content":"souvenirs","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/souvenirs.astro","pathname":"/souvenirs","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[{"type":"external","src":"_astro/AppLayout.BCC_VYdx.css"},{"type":"external","src":"_astro/index.UbSW_NYa.css"}],"routeData":{"route":"/","isIndex":true,"type":"page","pattern":"^\\/$","segments":[],"params":[],"component":"src/pages/index.astro","pathname":"/","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}}],"serverLike":true,"middlewareMode":"classic","base":"/","trailingSlash":"ignore","compressHTML":"jsx","componentMetadata":[["C:/Users/PC/Desktop/univers/src/pages/assistant.astro",{"propagation":"none","containsHead":true}],["C:/Users/PC/Desktop/univers/src/pages/badges.astro",{"propagation":"none","containsHead":true}],["C:/Users/PC/Desktop/univers/src/pages/capsules.astro",{"propagation":"none","containsHead":true}],["C:/Users/PC/Desktop/univers/src/pages/dashboard.astro",{"propagation":"none","containsHead":true}],["C:/Users/PC/Desktop/univers/src/pages/index.astro",{"propagation":"none","containsHead":true}],["C:/Users/PC/Desktop/univers/src/pages/journal.astro",{"propagation":"none","containsHead":true}],["C:/Users/PC/Desktop/univers/src/pages/love-languages.astro",{"propagation":"none","containsHead":true}],["C:/Users/PC/Desktop/univers/src/pages/messages.astro",{"propagation":"none","containsHead":true}],["C:/Users/PC/Desktop/univers/src/pages/onboarding.astro",{"propagation":"none","containsHead":true}],["C:/Users/PC/Desktop/univers/src/pages/rituals.astro",{"propagation":"none","containsHead":true}],["C:/Users/PC/Desktop/univers/src/pages/settings.astro",{"propagation":"none","containsHead":true}],["C:/Users/PC/Desktop/univers/src/pages/souvenirs.astro",{"propagation":"none","containsHead":true}]],"renderers":[],"clientDirectives":[["idle","(()=>{var l=(n,t)=>{let i=async()=>{await(await n())()},e=typeof t.value==\"object\"?t.value:void 0,s={timeout:e==null?void 0:e.timeout};\"requestIdleCallback\"in window?window.requestIdleCallback(i,s):setTimeout(i,s.timeout||200)};(self.Astro||(self.Astro={})).idle=l;window.dispatchEvent(new Event(\"astro:idle\"));})();"],["load","(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event(\"astro:load\"));})();"],["media","(()=>{var n=(a,t)=>{let i=async()=>{await(await a())()};if(t.value){let e=matchMedia(t.value);e.matches?i():e.addEventListener(\"change\",i,{once:!0})}};(self.Astro||(self.Astro={})).media=n;window.dispatchEvent(new Event(\"astro:media\"));})();"],["only","(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).only=e;window.dispatchEvent(new Event(\"astro:only\"));})();"],["visible","(()=>{var a=(s,i,o)=>{let r=async()=>{await(await s())()},t=typeof i.value==\"object\"?i.value:void 0,c={rootMargin:t==null?void 0:t.rootMargin},n=new IntersectionObserver(e=>{for(let l of e)if(l.isIntersecting){n.disconnect(),r();break}},c);for(let e of o.children)n.observe(e)};(self.Astro||(self.Astro={})).visible=a;window.dispatchEvent(new Event(\"astro:visible\"));})();"]],"entryModules":{"astro/entrypoints/prerender":"prerender-entry.DjnPvV5M.mjs","\u0000noop-middleware":"virtual_astro_middleware.mjs","\u0000virtual:astro:server-island-manifest":"chunks/_virtual_astro_server-island-manifest_C1Q2srgE.mjs","\u0000virtual:astro:session-driver":"chunks/_virtual_astro_session-driver_C-PI1Pas.mjs","\u0000virtual:astro:actions/noop-entrypoint":"chunks/noop-entrypoint_Z3zFhrGC.mjs","C:/Users/PC/Desktop/univers/node_modules/@astrojs/react/dist/vnode-children.js":"chunks/vnode-children_B6vVcKTz.mjs","@astrojs/vercel/entrypoint":"entry.mjs","\u0000virtual:astro:page:src/pages/assistant@_@astro":"chunks/assistant_BzjgvnGH.mjs","\u0000virtual:astro:page:src/pages/badges@_@astro":"chunks/badges_DwBnQKq7.mjs","\u0000virtual:astro:page:src/pages/capsules@_@astro":"chunks/capsules_CSv2Q7G6.mjs","\u0000virtual:astro:page:src/pages/dashboard@_@astro":"chunks/dashboard_DOHV3S50.mjs","\u0000virtual:astro:page:node_modules/astro/dist/assets/endpoint/generic@_@js":"chunks/generic_uqUCs2jL.mjs","\u0000virtual:astro:page:src/pages/index@_@astro":"chunks/index_CC21kFaH.mjs","\u0000virtual:astro:page:src/pages/journal@_@astro":"chunks/journal_D9LS3MIr.mjs","\u0000virtual:astro:page:src/pages/love-languages@_@astro":"chunks/love-languages_B5Dpw5RF.mjs","\u0000virtual:astro:page:src/pages/messages@_@astro":"chunks/messages_kAYtrZHS.mjs","\u0000virtual:astro:page:src/pages/api/notify@_@js":"chunks/notify_DD-K0lkY.mjs","\u0000virtual:astro:page:src/pages/onboarding@_@astro":"chunks/onboarding_O8oiAPC2.mjs","\u0000virtual:astro:page:src/pages/rituals@_@astro":"chunks/rituals_DKyWMAyH.mjs","\u0000virtual:astro:page:src/pages/settings@_@astro":"chunks/settings_CsMHj05R.mjs","C:/Users/PC/Desktop/univers/node_modules/astro/dist/assets/services/sharp.js":"chunks/sharp_DObHJDIj.mjs","\u0000virtual:astro:page:src/pages/souvenirs@_@astro":"chunks/souvenirs_CGGrCGEP.mjs","C:/Users/PC/Desktop/univers/src/layouts/AppLayout.astro?astro&type=script&index=0&lang.ts":"_astro/AppLayout.astro_astro_type_script_index_0_lang.p5-KM24h.js","C:/Users/PC/Desktop/univers/src/components/Assistant.jsx":"_astro/Assistant.6cLW12Lf.js","C:/Users/PC/Desktop/univers/src/components/BadgesList.jsx":"_astro/BadgesList.DABEYsk-.js","C:/Users/PC/Desktop/univers/src/components/Capsules.jsx":"_astro/Capsules.hYB_lbnj.js","C:/Users/PC/Desktop/univers/src/components/Chat.jsx":"_astro/Chat.OU9oo5m6.js","C:/Users/PC/Desktop/univers/src/components/Dashboard.jsx":"_astro/Dashboard.DpfvqiKH.js","C:/Users/PC/Desktop/univers/src/components/GlobalNotifications.jsx":"_astro/GlobalNotifications.BkTDwtmj.js","C:/Users/PC/Desktop/univers/src/components/Journal.jsx":"_astro/Journal.BgKQzw_6.js","C:/Users/PC/Desktop/univers/src/components/LoveLanguages.jsx":"_astro/LoveLanguages.BJ8tsOlJ.js","C:/Users/PC/Desktop/univers/src/components/Rituals.jsx":"_astro/Rituals.B6QSWO4v.js","C:/Users/PC/Desktop/univers/src/components/Settings.jsx":"_astro/Settings.D30X4186.js","C:/Users/PC/Desktop/univers/src/components/Souvenirs.jsx":"_astro/Souvenirs.EOwewjVi.js","@astrojs/react/client.js":"_astro/client.B2InhVG0.js","C:/Users/PC/Desktop/univers/src/pages/index.astro?astro&type=script&index=0&lang.ts":"_astro/index.astro_astro_type_script_index_0_lang.CQSsFPXR.js","C:/Users/PC/Desktop/univers/src/pages/onboarding.astro?astro&type=script&index=0&lang.ts":"_astro/onboarding.astro_astro_type_script_index_0_lang.Bo2Fysu6.js","astro:scripts/before-hydration.js":""},"inlinedScripts":[["C:/Users/PC/Desktop/univers/src/layouts/AppLayout.astro?astro&type=script&index=0&lang.ts","var e=document.getElementById(`splash-screen`);if(sessionStorage.getItem(`univers-splash-shown`))e&&e.remove();else{let t=document.getElementById(`splash-canvas`),n=t?.getContext(`2d`),r;if(t&&n){let i=()=>{t.width=window.innerWidth,t.height=window.innerHeight};window.addEventListener(`resize`,i),i();let a=[`❤️`,`💖`,`💕`,`💌`,`🌸`];class o{x=0;y=0;size=0;speed=0;opacity=0;wiggle=0;wiggleSpeed=0;angle=0;char=`❤️`;constructor(){this.reset(),this.y=Math.random()*t.height}reset(){this.x=Math.random()*t.width,this.y=-30,this.size=Math.random()*18+8,this.speed=Math.random()*1.5+.8,this.opacity=Math.random()*.4+.2,this.wiggle=Math.random()*1.5-.75,this.wiggleSpeed=Math.random()*.03+.01,this.angle=Math.random()*Math.PI,this.char=a[Math.floor(Math.random()*a.length)]}update(){this.y+=this.speed,this.angle+=this.wiggleSpeed,this.x+=Math.sin(this.angle)*this.wiggle,this.y>t.height+30&&this.reset()}draw(){n.save(),n.globalAlpha=this.opacity,n.font=`${this.size}px Arial`,n.fillText(this.char,this.x,this.y),n.restore()}}let s=Array.from({length:20},()=>new o),c=()=>{n.clearRect(0,0,t.width,t.height),s.forEach(e=>{e.update(),e.draw()}),r=requestAnimationFrame(c)};c();let l=!1,u=()=>{l||(l=!0,e&&(e.classList.add(`fade-out`),setTimeout(()=>{cancelAnimationFrame(r),window.removeEventListener(`resize`,i),e.remove(),sessionStorage.setItem(`univers-splash-shown`,`true`)},600)))},d=document.getElementById(`splash-dismiss-btn`);d&&(d.addEventListener(`click`,u),d.addEventListener(`touchstart`,u))}else{let t=!1,n=()=>{t||(t=!0,e&&(e.classList.add(`fade-out`),setTimeout(()=>{e.remove(),sessionStorage.setItem(`univers-splash-shown`,`true`)},600)))},r=document.getElementById(`splash-dismiss-btn`);r&&(r.addEventListener(`click`,n),r.addEventListener(`touchstart`,n))}}(function(){let e=document.getElementById(`stars-container`);if(!e)return;let t=[];for(let n=0;n<30;n++){let n=document.createElement(`div`);n.className=`bg-star`,n.style.left=`${Math.random()*100}vw`,n.style.top=`${Math.random()*100}vh`;let r=Math.random()*3+2;n.style.width=`${r}px`,n.style.height=`${r}px`,n.style.animationDelay=`${Math.random()*4}s`,n.style.animationDuration=`${Math.random()*3+3}s`,e.appendChild(n),t.push(n)}let n=()=>{let e=window.scrollY/(document.documentElement.scrollHeight-window.innerHeight||1),t=Math.floor(e*180),n=window.location.pathname,r=0;for(let e=0;e<n.length;e++)r+=n.charCodeAt(e);let i=`hsl(${(t+r%12*30)%360}, 100%, 75%)`;document.documentElement.style.setProperty(`--star-color`,i)},r=e=>{let t=e.touches?e.touches[0].clientX:e.clientX,n=e.touches?e.touches[0].clientY:e.clientY,r=t/window.innerWidth,i=n/window.innerHeight,a=Math.floor((r+i)*120),o=window.scrollY/(document.documentElement.scrollHeight-window.innerHeight||1),s=Math.floor(o*120),c=window.location.pathname,l=0;for(let e=0;e<c.length;e++)l+=c.charCodeAt(e);let u=l%12*30,d=(a+s+u)%360;document.documentElement.style.setProperty(`--star-color`,`hsl(${d}, 100%, 75%)`)};window.addEventListener(`scroll`,n,{passive:!0}),window.addEventListener(`mousemove`,r,{passive:!0}),window.addEventListener(`touchmove`,r,{passive:!0}),n(),setInterval(n,1e3)})();"]],"assets":["/favicon.ico","/favicon.svg","/logo.png","/logo.webp","/manifest.webmanifest","/pwa-192x192.png","/pwa-512x512.png","/sw.js","/_astro/Assistant.6cLW12Lf.js","/_astro/award.u_Eyj66h.js","/_astro/BadgesList.DABEYsk-.js","/_astro/calendar.CybXJA3s.js","/_astro/Capsules.hYB_lbnj.js","/_astro/Chat.OU9oo5m6.js","/_astro/client.B2InhVG0.js","/_astro/Dashboard.DpfvqiKH.js","/_astro/GlobalNotifications.BkTDwtmj.js","/_astro/heart.YIGZGkMc.js","/_astro/history.DSrFQfGX.js","/_astro/image.kftYKlPx.js","/_astro/index.astro_astro_type_script_index_0_lang.CQSsFPXR.js","/_astro/Journal.BgKQzw_6.js","/_astro/jsx-runtime.DmDOpZrU.js","/_astro/lock.B4XfHgp-.js","/_astro/LoveLanguages.BJ8tsOlJ.js","/_astro/onboarding.astro_astro_type_script_index_0_lang.Bo2Fysu6.js","/_astro/plus.CBxvf62y.js","/_astro/react.C1VktWof.js","/_astro/Rituals.B6QSWO4v.js","/_astro/send.VZqgyxjK.js","/_astro/Settings.D30X4186.js","/_astro/Souvenirs.EOwewjVi.js","/_astro/sparkles.Bd8wkGOH.js","/_astro/supabase.DkpgSdSF.js","/_astro/unlock.BFv31DZF.js","/_astro/AppLayout.BCC_VYdx.css","/_astro/dashboard.BJ3Z4SM3.css","/_astro/index.UbSW_NYa.css","/_astro/messages.BnZy3JfM.css"],"buildFormat":"directory","checkOrigin":true,"actionBodySizeLimit":1048576,"serverIslandBodySizeLimit":1048576,"allowedDomains":[],"key":"MADLUeAdiAtYWeHH3WBiRUum2fk9gO3f7Q1ffZmR4H8=","image":{},"devToolbar":{"enabled":false,"debugInfoOutput":""},"logLevel":"info","shouldInjectCspMetaTags":false});
+var _manifest = deserializeManifest({"rootDir":"file:///C:/Users/PC/Desktop/univers/","cacheDir":"file:///C:/Users/PC/Desktop/univers/node_modules/.astro/","outDir":"file:///C:/Users/PC/Desktop/univers/dist/","srcDir":"file:///C:/Users/PC/Desktop/univers/src/","publicDir":"file:///C:/Users/PC/Desktop/univers/public/","buildClientDir":"file:///C:/Users/PC/Desktop/univers/dist/client/","buildServerDir":"file:///C:/Users/PC/Desktop/univers/dist/server/","adapterName":"@astrojs/vercel","assetsDir":"_astro","routes":[{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"type":"page","component":"_server-islands.astro","params":["name"],"segments":[[{"content":"_server-islands","dynamic":false,"spread":false}],[{"content":"name","dynamic":true,"spread":false}]],"pattern":"^\\/_server-islands\\/([^/]+?)\\/?$","prerender":false,"isIndex":false,"fallbackRoutes":[],"route":"/_server-islands/[name]","origin":"internal","distURL":[],"_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/_image","component":"node_modules/astro/dist/assets/endpoint/generic.js","params":[],"pathname":"/_image","pattern":"^\\/_image\\/?$","segments":[[{"content":"_image","dynamic":false,"spread":false}]],"type":"endpoint","prerender":false,"fallbackRoutes":[],"distURL":[],"isIndex":false,"origin":"internal","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/api/notify","isIndex":false,"type":"endpoint","pattern":"^\\/api\\/notify\\/?$","segments":[[{"content":"api","dynamic":false,"spread":false}],[{"content":"notify","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/api/notify.js","pathname":"/api/notify","prerender":false,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/assistant","isIndex":false,"type":"page","pattern":"^\\/assistant\\/?$","segments":[[{"content":"assistant","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/assistant.astro","pathname":"/assistant","prerender":true,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/badges","isIndex":false,"type":"page","pattern":"^\\/badges\\/?$","segments":[[{"content":"badges","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/badges.astro","pathname":"/badges","prerender":true,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/capsules","isIndex":false,"type":"page","pattern":"^\\/capsules\\/?$","segments":[[{"content":"capsules","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/capsules.astro","pathname":"/capsules","prerender":true,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/dashboard","isIndex":false,"type":"page","pattern":"^\\/dashboard\\/?$","segments":[[{"content":"dashboard","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/dashboard.astro","pathname":"/dashboard","prerender":true,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/journal","isIndex":false,"type":"page","pattern":"^\\/journal\\/?$","segments":[[{"content":"journal","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/journal.astro","pathname":"/journal","prerender":true,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/love-languages","isIndex":false,"type":"page","pattern":"^\\/love-languages\\/?$","segments":[[{"content":"love-languages","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/love-languages.astro","pathname":"/love-languages","prerender":true,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/messages","isIndex":false,"type":"page","pattern":"^\\/messages\\/?$","segments":[[{"content":"messages","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/messages.astro","pathname":"/messages","prerender":true,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/onboarding","isIndex":false,"type":"page","pattern":"^\\/onboarding\\/?$","segments":[[{"content":"onboarding","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/onboarding.astro","pathname":"/onboarding","prerender":true,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/rituals","isIndex":false,"type":"page","pattern":"^\\/rituals\\/?$","segments":[[{"content":"rituals","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/rituals.astro","pathname":"/rituals","prerender":true,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/settings","isIndex":false,"type":"page","pattern":"^\\/settings\\/?$","segments":[[{"content":"settings","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/settings.astro","pathname":"/settings","prerender":true,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/souvenirs","isIndex":false,"type":"page","pattern":"^\\/souvenirs\\/?$","segments":[[{"content":"souvenirs","dynamic":false,"spread":false}]],"params":[],"component":"src/pages/souvenirs.astro","pathname":"/souvenirs","prerender":true,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}},{"file":"","links":[],"scripts":[],"styles":[],"routeData":{"route":"/","isIndex":true,"type":"page","pattern":"^\\/$","segments":[],"params":[],"component":"src/pages/index.astro","pathname":"/","prerender":true,"fallbackRoutes":[],"distURL":[],"origin":"project","_meta":{"trailingSlash":"ignore"}}}],"serverLike":true,"middlewareMode":"classic","base":"/","trailingSlash":"ignore","compressHTML":"jsx","componentMetadata":[["C:/Users/PC/Desktop/univers/src/pages/assistant.astro",{"propagation":"none","containsHead":true}],["C:/Users/PC/Desktop/univers/src/pages/badges.astro",{"propagation":"none","containsHead":true}],["C:/Users/PC/Desktop/univers/src/pages/capsules.astro",{"propagation":"none","containsHead":true}],["C:/Users/PC/Desktop/univers/src/pages/dashboard.astro",{"propagation":"none","containsHead":true}],["C:/Users/PC/Desktop/univers/src/pages/index.astro",{"propagation":"none","containsHead":true}],["C:/Users/PC/Desktop/univers/src/pages/journal.astro",{"propagation":"none","containsHead":true}],["C:/Users/PC/Desktop/univers/src/pages/love-languages.astro",{"propagation":"none","containsHead":true}],["C:/Users/PC/Desktop/univers/src/pages/messages.astro",{"propagation":"none","containsHead":true}],["C:/Users/PC/Desktop/univers/src/pages/onboarding.astro",{"propagation":"none","containsHead":true}],["C:/Users/PC/Desktop/univers/src/pages/rituals.astro",{"propagation":"none","containsHead":true}],["C:/Users/PC/Desktop/univers/src/pages/settings.astro",{"propagation":"none","containsHead":true}],["C:/Users/PC/Desktop/univers/src/pages/souvenirs.astro",{"propagation":"none","containsHead":true}]],"renderers":[],"clientDirectives":[["idle","(()=>{var l=(n,t)=>{let i=async()=>{await(await n())()},e=typeof t.value==\"object\"?t.value:void 0,s={timeout:e==null?void 0:e.timeout};\"requestIdleCallback\"in window?window.requestIdleCallback(i,s):setTimeout(i,s.timeout||200)};(self.Astro||(self.Astro={})).idle=l;window.dispatchEvent(new Event(\"astro:idle\"));})();"],["load","(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event(\"astro:load\"));})();"],["media","(()=>{var n=(a,t)=>{let i=async()=>{await(await a())()};if(t.value){let e=matchMedia(t.value);e.matches?i():e.addEventListener(\"change\",i,{once:!0})}};(self.Astro||(self.Astro={})).media=n;window.dispatchEvent(new Event(\"astro:media\"));})();"],["only","(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).only=e;window.dispatchEvent(new Event(\"astro:only\"));})();"],["visible","(()=>{var a=(s,i,o)=>{let r=async()=>{await(await s())()},t=typeof i.value==\"object\"?i.value:void 0,c={rootMargin:t==null?void 0:t.rootMargin},n=new IntersectionObserver(e=>{for(let l of e)if(l.isIntersecting){n.disconnect(),r();break}},c);for(let e of o.children)n.observe(e)};(self.Astro||(self.Astro={})).visible=a;window.dispatchEvent(new Event(\"astro:visible\"));})();"]],"entryModules":{"astro/entrypoints/prerender":"prerender-entry.BjXxOkIq.mjs","\u0000noop-middleware":"virtual_astro_middleware.mjs","\u0000virtual:astro:server-island-manifest":"chunks/_virtual_astro_server-island-manifest_C1Q2srgE.mjs","\u0000virtual:astro:session-driver":"chunks/_virtual_astro_session-driver_C-PI1Pas.mjs","\u0000virtual:astro:page:src/pages/assistant@_@astro":"chunks/assistant_D3q7d6SH.mjs","\u0000virtual:astro:page:src/pages/badges@_@astro":"chunks/badges_s1BmoymA.mjs","\u0000virtual:astro:page:src/pages/capsules@_@astro":"chunks/capsules_H1lRwqdE.mjs","\u0000virtual:astro:page:src/pages/dashboard@_@astro":"chunks/dashboard_D42WVPCN.mjs","\u0000virtual:astro:page:src/pages/index@_@astro":"chunks/index_CD2s5HiS.mjs","\u0000virtual:astro:page:src/pages/journal@_@astro":"chunks/journal_ZOCykol6.mjs","\u0000virtual:astro:page:src/pages/love-languages@_@astro":"chunks/love-languages_N0LxT_Cz.mjs","\u0000virtual:astro:page:src/pages/messages@_@astro":"chunks/messages_c1r0Chd9.mjs","\u0000virtual:astro:actions/noop-entrypoint":"chunks/noop-entrypoint_Z3zFhrGC.mjs","\u0000virtual:astro:page:src/pages/onboarding@_@astro":"chunks/onboarding_DgeP6eR_.mjs","\u0000virtual:astro:page:src/pages/rituals@_@astro":"chunks/rituals_C_H1I5m5.mjs","\u0000virtual:astro:page:src/pages/settings@_@astro":"chunks/settings_CiuEnZ_F.mjs","\u0000virtual:astro:page:src/pages/souvenirs@_@astro":"chunks/souvenirs_WQCScCw3.mjs","C:/Users/PC/Desktop/univers/node_modules/@astrojs/react/dist/vnode-children.js":"chunks/vnode-children_B6vVcKTz.mjs","@astrojs/vercel/entrypoint":"entry.mjs","\u0000virtual:astro:page:node_modules/astro/dist/assets/endpoint/generic@_@js":"chunks/generic_BKw9ny2T.mjs","\u0000virtual:astro:page:src/pages/api/notify@_@js":"chunks/notify_C4ab4_VM.mjs","C:/Users/PC/Desktop/univers/node_modules/astro/dist/assets/services/sharp.js":"chunks/sharp_CDoBJrzf.mjs","C:/Users/PC/Desktop/univers/src/layouts/AppLayout.astro?astro&type=script&index=0&lang.ts":"_astro/AppLayout.astro_astro_type_script_index_0_lang.p5-KM24h.js","C:/Users/PC/Desktop/univers/src/components/Assistant.jsx":"_astro/Assistant.6cLW12Lf.js","C:/Users/PC/Desktop/univers/src/components/BadgesList.jsx":"_astro/BadgesList.DABEYsk-.js","C:/Users/PC/Desktop/univers/src/components/Capsules.jsx":"_astro/Capsules.hYB_lbnj.js","C:/Users/PC/Desktop/univers/src/components/Chat.jsx":"_astro/Chat.OU9oo5m6.js","C:/Users/PC/Desktop/univers/src/components/Dashboard.jsx":"_astro/Dashboard.DpfvqiKH.js","C:/Users/PC/Desktop/univers/src/components/GlobalNotifications.jsx":"_astro/GlobalNotifications.BkTDwtmj.js","C:/Users/PC/Desktop/univers/src/components/Journal.jsx":"_astro/Journal.BgKQzw_6.js","C:/Users/PC/Desktop/univers/src/components/LoveLanguages.jsx":"_astro/LoveLanguages.BJ8tsOlJ.js","C:/Users/PC/Desktop/univers/src/components/Rituals.jsx":"_astro/Rituals.B6QSWO4v.js","C:/Users/PC/Desktop/univers/src/components/Settings.jsx":"_astro/Settings.D30X4186.js","C:/Users/PC/Desktop/univers/src/components/Souvenirs.jsx":"_astro/Souvenirs.EOwewjVi.js","@astrojs/react/client.js":"_astro/client.B2InhVG0.js","C:/Users/PC/Desktop/univers/src/pages/index.astro?astro&type=script&index=0&lang.ts":"_astro/index.astro_astro_type_script_index_0_lang.CQSsFPXR.js","C:/Users/PC/Desktop/univers/src/pages/onboarding.astro?astro&type=script&index=0&lang.ts":"_astro/onboarding.astro_astro_type_script_index_0_lang.Bo2Fysu6.js","astro:scripts/before-hydration.js":""},"inlinedScripts":[["C:/Users/PC/Desktop/univers/src/layouts/AppLayout.astro?astro&type=script&index=0&lang.ts","var e=document.getElementById(`splash-screen`);if(sessionStorage.getItem(`univers-splash-shown`))e&&e.remove();else{let t=document.getElementById(`splash-canvas`),n=t?.getContext(`2d`),r;if(t&&n){let i=()=>{t.width=window.innerWidth,t.height=window.innerHeight};window.addEventListener(`resize`,i),i();let a=[`❤️`,`💖`,`💕`,`💌`,`🌸`];class o{x=0;y=0;size=0;speed=0;opacity=0;wiggle=0;wiggleSpeed=0;angle=0;char=`❤️`;constructor(){this.reset(),this.y=Math.random()*t.height}reset(){this.x=Math.random()*t.width,this.y=-30,this.size=Math.random()*18+8,this.speed=Math.random()*1.5+.8,this.opacity=Math.random()*.4+.2,this.wiggle=Math.random()*1.5-.75,this.wiggleSpeed=Math.random()*.03+.01,this.angle=Math.random()*Math.PI,this.char=a[Math.floor(Math.random()*a.length)]}update(){this.y+=this.speed,this.angle+=this.wiggleSpeed,this.x+=Math.sin(this.angle)*this.wiggle,this.y>t.height+30&&this.reset()}draw(){n.save(),n.globalAlpha=this.opacity,n.font=`${this.size}px Arial`,n.fillText(this.char,this.x,this.y),n.restore()}}let s=Array.from({length:20},()=>new o),c=()=>{n.clearRect(0,0,t.width,t.height),s.forEach(e=>{e.update(),e.draw()}),r=requestAnimationFrame(c)};c();let l=!1,u=()=>{l||(l=!0,e&&(e.classList.add(`fade-out`),setTimeout(()=>{cancelAnimationFrame(r),window.removeEventListener(`resize`,i),e.remove(),sessionStorage.setItem(`univers-splash-shown`,`true`)},600)))},d=document.getElementById(`splash-dismiss-btn`);d&&(d.addEventListener(`click`,u),d.addEventListener(`touchstart`,u))}else{let t=!1,n=()=>{t||(t=!0,e&&(e.classList.add(`fade-out`),setTimeout(()=>{e.remove(),sessionStorage.setItem(`univers-splash-shown`,`true`)},600)))},r=document.getElementById(`splash-dismiss-btn`);r&&(r.addEventListener(`click`,n),r.addEventListener(`touchstart`,n))}}(function(){let e=document.getElementById(`stars-container`);if(!e)return;let t=[];for(let n=0;n<30;n++){let n=document.createElement(`div`);n.className=`bg-star`,n.style.left=`${Math.random()*100}vw`,n.style.top=`${Math.random()*100}vh`;let r=Math.random()*3+2;n.style.width=`${r}px`,n.style.height=`${r}px`,n.style.animationDelay=`${Math.random()*4}s`,n.style.animationDuration=`${Math.random()*3+3}s`,e.appendChild(n),t.push(n)}let n=()=>{let e=window.scrollY/(document.documentElement.scrollHeight-window.innerHeight||1),t=Math.floor(e*180),n=window.location.pathname,r=0;for(let e=0;e<n.length;e++)r+=n.charCodeAt(e);let i=`hsl(${(t+r%12*30)%360}, 100%, 75%)`;document.documentElement.style.setProperty(`--star-color`,i)},r=e=>{let t=e.touches?e.touches[0].clientX:e.clientX,n=e.touches?e.touches[0].clientY:e.clientY,r=t/window.innerWidth,i=n/window.innerHeight,a=Math.floor((r+i)*120),o=window.scrollY/(document.documentElement.scrollHeight-window.innerHeight||1),s=Math.floor(o*120),c=window.location.pathname,l=0;for(let e=0;e<c.length;e++)l+=c.charCodeAt(e);let u=l%12*30,d=(a+s+u)%360;document.documentElement.style.setProperty(`--star-color`,`hsl(${d}, 100%, 75%)`)};window.addEventListener(`scroll`,n,{passive:!0}),window.addEventListener(`mousemove`,r,{passive:!0}),window.addEventListener(`touchmove`,r,{passive:!0}),n(),setInterval(n,1e3)})();"]],"assets":["/favicon.ico","/favicon.svg","/logo.png","/logo.webp","/manifest.webmanifest","/pwa-192x192.png","/pwa-512x512.png","/sw.js","/_astro/Assistant.6cLW12Lf.js","/_astro/award.u_Eyj66h.js","/_astro/BadgesList.DABEYsk-.js","/_astro/calendar.CybXJA3s.js","/_astro/Capsules.hYB_lbnj.js","/_astro/Chat.OU9oo5m6.js","/_astro/client.B2InhVG0.js","/_astro/Dashboard.DpfvqiKH.js","/_astro/GlobalNotifications.BkTDwtmj.js","/_astro/heart.YIGZGkMc.js","/_astro/history.DSrFQfGX.js","/_astro/image.kftYKlPx.js","/_astro/index.astro_astro_type_script_index_0_lang.CQSsFPXR.js","/_astro/Journal.BgKQzw_6.js","/_astro/jsx-runtime.DmDOpZrU.js","/_astro/lock.B4XfHgp-.js","/_astro/LoveLanguages.BJ8tsOlJ.js","/_astro/onboarding.astro_astro_type_script_index_0_lang.Bo2Fysu6.js","/_astro/plus.CBxvf62y.js","/_astro/react.C1VktWof.js","/_astro/Rituals.B6QSWO4v.js","/_astro/send.VZqgyxjK.js","/_astro/Settings.D30X4186.js","/_astro/Souvenirs.EOwewjVi.js","/_astro/sparkles.Bd8wkGOH.js","/_astro/supabase.DkpgSdSF.js","/_astro/unlock.BFv31DZF.js","/_astro/AppLayout.BCC_VYdx.css","/_astro/dashboard.BJ3Z4SM3.css","/_astro/index.UbSW_NYa.css","/_astro/messages.BnZy3JfM.css","/assistant/index.html","/badges/index.html","/capsules/index.html","/dashboard/index.html","/journal/index.html","/love-languages/index.html","/messages/index.html","/onboarding/index.html","/rituals/index.html","/settings/index.html","/souvenirs/index.html","/index.html"],"buildFormat":"directory","checkOrigin":true,"actionBodySizeLimit":1048576,"serverIslandBodySizeLimit":1048576,"allowedDomains":[],"key":"N+usR91wPI67ZKKi9N94g9bzPRIKlKHddN9u6D1S7mw=","image":{},"devToolbar":{"enabled":false,"debugInfoOutput":""},"logLevel":"info","shouldInjectCspMetaTags":false});
 var manifestRoutes = _manifest.routes;
 var manifest = Object.assign(_manifest, {
 	renderers,
@@ -5753,7 +5240,7 @@ var entrypoint_default = { async fetch(request) {
 	const hasValidMiddlewareSecret = request.headers.get(ASTRO_MIDDLEWARE_SECRET_HEADER) === middlewareSecret;
 	let realPath = void 0;
 	if (hasValidMiddlewareSecret) realPath = request.headers.get(ASTRO_PATH_HEADER);
-	else if (url.searchParams.get("x_astro_path_token") === "7e28090d-a7f8-4dda-81cd-6f3229542c5c") realPath = url.searchParams.get(ASTRO_PATH_PARAM);
+	else if (url.searchParams.get("x_astro_path_token") === "c0a3042d-de6a-493d-b0b1-1e61ef01b3d1") realPath = url.searchParams.get(ASTRO_PATH_PARAM);
 	if (typeof realPath === "string") {
 		url.pathname = realPath;
 		url.searchParams.delete(ASTRO_PATH_PARAM);

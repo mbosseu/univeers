@@ -1,4 +1,4 @@
-import { $ as AstroError, A as MissingMediaQueryDirective, F as NoMatchingRenderer, L as OnlyResponseCanBeReturned, M as NoClientOnlyHint, P as NoMatchingImport, U as ResponseSentError, Y as UnavailableAstroGlobal, o as EndpointDidNotReturnAResponse } from "./errors-data_sKwIzwfZ.mjs";
+import { $ as NoMatchingImport, E as EndpointDidNotReturnAResponse, Y as MissingMediaQueryDirective, Z as NoClientOnlyHint, ct as ResponseSentError, et as NoMatchingRenderer, mt as UnavailableAstroGlobal, nt as OnlyResponseCanBeReturned, vt as AstroError } from "./path_JcdHq8sq.mjs";
 import colors from "piccolore";
 import { escape } from "html-escaper";
 import { clsx } from "clsx";
@@ -835,9 +835,6 @@ function renderAllHeadContent(result) {
 	content += styles.join(sep) + links.join(sep) + scripts.join(sep);
 	content += result._metadata.extraHead.join("");
 	return markHTMLString(content);
-}
-function renderHead() {
-	return createRenderInstruction({ type: "head" });
 }
 function maybeRenderHead() {
 	return createRenderInstruction({ type: "maybe-head" });
@@ -2312,4 +2309,4 @@ function spreadAttributes(values = {}, _name, { class: scopedClassName } = {}) {
 	return markHTMLString(output);
 }
 //#endregion
-export { REDIRECT_STATUS_CODES as A, renderEndpoint as C, ASTRO_ERROR_HEADER as D, isRoute500 as E, originPathnameSymbol as F, pipelineSymbol as I, responseSentSymbol as L, appSymbol as M, clientAddressSymbol as N, ASTRO_GENERATOR as O, fetchStateSymbol as P, unescapeHTML as S, isRoute404 as T, createRenderInstruction as _, chunkToString as a, pushDirective as b, renderSlotToString as c, decodeKey as d, decryptString as f, addAttribute as g, renderHead as h, renderComponent as i, REROUTABLE_STATUS_CODES as j, DEFAULT_404_COMPONENT as k, isRenderTemplateResult as l, maybeRenderHead as m, renderPage as n, createSlotValueFromString as o, generateCspDigest as p, renderJSX as r, renderSlot as s, spreadAttributes as t, renderTemplate as u, isRenderInstruction as v, createAstro as w, isAstroComponentFactory as x, normalizeCspResourceEntry as y };
+export { clientAddressSymbol as A, isRoute500 as C, REDIRECT_STATUS_CODES as D, DEFAULT_404_COMPONENT as E, originPathnameSymbol as M, pipelineSymbol as N, REROUTABLE_STATUS_CODES as O, responseSentSymbol as P, isRoute404 as S, ASTRO_GENERATOR as T, pushDirective as _, chunkToString as a, renderEndpoint as b, isRenderTemplateResult as c, decryptString as d, generateCspDigest as f, normalizeCspResourceEntry as g, isRenderInstruction as h, renderComponent as i, fetchStateSymbol as j, appSymbol as k, renderTemplate as l, addAttribute as m, renderPage as n, createSlotValueFromString as o, maybeRenderHead as p, renderJSX as r, renderSlotToString as s, spreadAttributes as t, decodeKey as u, isAstroComponentFactory as v, ASTRO_ERROR_HEADER as w, createAstro as x, unescapeHTML as y };
