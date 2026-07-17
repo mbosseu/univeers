@@ -298,7 +298,7 @@ export default function Chat() {
       };
       
       recorder.onstop = async () => {
-        const audioBlob = new Blob(chunks, { type: 'audio/webm' });
+        const audioBlob = new Blob(chunks, { type: recorder.mimeType });
         await uploadAudio(audioBlob);
         stream.getTracks().forEach(track => track.stop());
       };
