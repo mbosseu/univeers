@@ -337,23 +337,32 @@ export default function Chat() {
     try {
       const fileName = `${profile.couple_id}/${Date.now()}.webm`;
       const filePath = `chat-audio/${fileName}`;
+      let audioUrl;
 
       const { error: uploadErr } = await supabase.storage
         .from('souvenir-media')
         .upload(filePath, audioBlob);
 
-      if (uploadErr) throw uploadErr;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('souvenir-media')
-        .getPublicUrl(filePath);
+      if (!uploadErr) {
+        const { data: { publicUrl } } = supabase.storage
+          .from('souvenir-media')
+          .getPublicUrl(filePath);
+        audioUrl = publicUrl;
+      } else {
+        console.warn('Storage upload failed, using base64 fallback for audio:', uploadErr);
+        audioUrl = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.readAsDataURL(audioBlob);
+        });
+      }
 
       const { data: newMsg, error: insertErr } = await supabase
         .from('messages')
         .insert([{
           couple_id: profile.couple_id,
           sender_id: user.id,
-          message_text: publicUrl,
+          message_text: audioUrl,
           message_type: 'audio'
         }])
         .select()
