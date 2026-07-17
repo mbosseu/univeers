@@ -29,7 +29,53 @@ export default function GlobalNotifications() {
         }
       }
 
-      // 3. Setup abonnement global aux messages
+      // --- NOUVEAU : Enregistrement Service Worker et Web Push ---
+      if ('serviceWorker' in navigator && 'PushManager' in window && Notification.permission === 'granted') {
+        try {
+          const registration = await navigator.serviceWorker.register('/sw.js');
+          
+          // Vérifier si déjà abonné
+          let subscription = await registration.pushManager.getSubscription();
+          
+          if (!subscription) {
+            // S'abonner aux Web Push
+            const publicVapidKey = import.meta.env.PUBLIC_VAPID_KEY;
+            
+            if (publicVapidKey) {
+              const urlBase64ToUint8Array = (base64String) => {
+                const padding = '='.repeat((4 - base64String.length % 4) % 4);
+                const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+                const rawData = window.atob(base64);
+                const outputArray = new Uint8Array(rawData.length);
+                for (let i = 0; i < rawData.length; ++i) {
+                  outputArray[i] = rawData.charCodeAt(i);
+                }
+                return outputArray;
+              };
+
+              subscription = await registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: urlBase64ToUint8Array(publicVapidKey)
+              });
+            }
+          }
+          
+          if (subscription) {
+            // Sauvegarder dans Supabase
+            await supabase
+              .from('push_subscriptions')
+              .upsert({
+                user_id: session.user.id,
+                subscription_json: JSON.parse(JSON.stringify(subscription))
+              }, { onConflict: 'user_id' });
+          }
+        } catch (error) {
+          console.warn("Erreur lors de l'enregistrement Web Push:", error);
+        }
+      }
+      // -------------------------------------------------------------
+
+      // 3. Setup abonnement global aux messages (Notifications Locales)
       if (channelRef.current) supabase.removeChannel(channelRef.current);
 
       const channel = supabase
@@ -40,15 +86,14 @@ export default function GlobalNotifications() {
           table: 'messages',
           filter: `couple_id=eq.${profile.couple_id}`
         }, (payload) => {
-          // On s'assure qu'on ne se notifie pas soi-même
           if (payload.new.sender_id === session.user.id) return;
 
-          // Si on est pas sur la messagerie OU si l'onglet est caché
           const isNotOnChat = window.location.pathname !== '/messages';
           const isHidden = document.visibilityState !== 'visible';
 
+          // On notifie en local UNIQUEMENT si la page est ouverte et pas focalisée
+          // Le Service Worker s'occupe du push si l'appli est fermée.
           if (isNotOnChat || isHidden) {
-            // Afficher la notification HTML5 locale si permise
             if ('Notification' in window && Notification.permission === 'granted') {
               let bodyText = "Vous avez reçu un nouveau message !";
               if (payload.new.message_type === 'audio') bodyText = "🎙️ Nouvelle note vocale";
@@ -56,16 +101,25 @@ export default function GlobalNotifications() {
               if (payload.new.message_type === 'secret') bodyText = "🔒 Nouveau message secret";
 
               try {
-                const notif = new Notification("Votre Univers ❤️", {
-                  body: bodyText,
-                  icon: "/logo.png" // Assure d'avoir un logo.png à la racine
+                // On utilise le Service Worker pour afficher la notification 
+                // (c'est plus propre sur mobile) ou la méthode classique.
+                navigator.serviceWorker.ready.then(registration => {
+                  registration.showNotification("Votre Univers ❤️", {
+                    body: bodyText,
+                    icon: "/logo.png",
+                    badge: "/favicon.svg",
+                    data: { url: '/messages' }
+                  });
+                }).catch(() => {
+                  const notif = new Notification("Votre Univers ❤️", {
+                    body: bodyText,
+                    icon: "/logo.png"
+                  });
+                  notif.onclick = () => {
+                    window.location.href = '/messages';
+                    notif.close();
+                  };
                 });
-
-                // Clic sur la notification -> ouvre la messagerie
-                notif.onclick = () => {
-                  window.location.href = '/messages';
-                  notif.close();
-                };
               } catch (e) {
                 console.warn("Impossible d'afficher la notification", e);
               }

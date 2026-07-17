@@ -12,12 +12,14 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^7.1.0",
     "@astrojs/react": "^4.2.0",
+    "@astrojs/vercel": "^11.0.3",
     "@supabase/supabase-js": "^2.39.0",
+    "astro": "^7.1.0",
     "lucide-react": "^0.300.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "vite-plugin-pwa": "^0.21.0"
+    "vite-plugin-pwa": "^0.21.0",
+    "web-push": "^3.6.7"
   }
 }

@@ -262,6 +262,24 @@ export default function Chat() {
         return [...prev, newMsg];
       });
 
+      // -- DÉCLENCHER LA NOTIFICATION WEB PUSH --
+      try {
+        fetch('/api/notify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            coupleId: profile.couple_id,
+            senderId: user.id,
+            messageText: msgText,
+            messageType: type,
+            title: profile.display_name || 'Votre partenaire'
+          })
+        }).catch(err => console.warn('Push trigger failed', err));
+      } catch (err) {
+        console.warn('Push error', err);
+      }
+      // ----------------------------------------
+
       setInputText('');
       clearPhoto();
       setIsSecret(false);
@@ -400,6 +418,25 @@ export default function Chat() {
         if (prev.some(m => m.id === newMsg.id)) return prev;
         return [...prev, newMsg];
       });
+
+      // -- DÉCLENCHER LA NOTIFICATION WEB PUSH --
+      try {
+        fetch('/api/notify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            coupleId: profile.couple_id,
+            senderId: user.id,
+            messageText: '',
+            messageType: 'audio',
+            title: profile.display_name || 'Votre partenaire'
+          })
+        }).catch(err => console.warn('Push trigger failed', err));
+      } catch (err) {
+        console.warn('Push error', err);
+      }
+      // ----------------------------------------
+
     } catch (err) {
       console.error('Error sending voice note:', err);
       alert("Erreur lors de l'envoi de la note vocale.");

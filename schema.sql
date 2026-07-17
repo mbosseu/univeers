@@ -259,5 +259,15 @@ ALTER TABLE public.time_capsules DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.messages DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.couple_events DISABLE ROW LEVEL SECURITY;
 
--- 15. HABILITER LE TEMPS RÉEL (REALTIME) POUR L'APPLICATION (CHAT, FLAMME, HUMEURS, QUESTIONS, DÉFIS, SOUVENIRS, RITUELS, CAPSULES)
+-- 15. TABLE DES ABONNEMENTS PUSH
+CREATE TABLE IF NOT EXISTS public.push_subscriptions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+    subscription_json JSONB NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    CONSTRAINT unique_user_subscription UNIQUE (user_id)
+);
+ALTER TABLE public.push_subscriptions DISABLE ROW LEVEL SECURITY;
+
+-- 16. HABILITER LE TEMPS RÉEL (REALTIME) POUR L'APPLICATION
 alter publication supabase_realtime add table public.messages, public.couples, public.daily_responses, public.quest_attempts, public.souvenirs, public.couple_goals, public.sweet_notes, public.evening_reflections, public.time_capsules;
