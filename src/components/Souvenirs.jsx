@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase.js';
 import { Image, MapPin, Calendar, Heart, Plus, Loader2, Smile, Compass } from 'lucide-react';
 
@@ -35,8 +35,15 @@ export default function Souvenirs() {
   const [imageFile, setImageFile] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
+  const channelRef = useRef(null);
+
   useEffect(() => {
     checkUser();
+    return () => {
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+      }
+    };
   }, []);
 
   // Map initialization inside React
@@ -119,6 +126,25 @@ export default function Souvenirs() {
 
         if (error) throw error;
         setSouvenirs(list || []);
+
+        // Abonnement temps réel pour synchroniser les souvenirs
+        if (channelRef.current) supabase.removeChannel(channelRef.current);
+        const channel = supabase
+          .channel('souvenirs_realtime')
+          .on('postgres_changes', {
+            event: '*',
+            schema: 'public',
+            table: 'souvenirs',
+            filter: `couple_id=eq.${userProfile.couple_id}`
+          }, (payload) => {
+            if (payload.eventType === 'INSERT') {
+              setSouvenirs(prev => [payload.new, ...prev]);
+            } else if (payload.eventType === 'DELETE') {
+              setSouvenirs(prev => prev.filter(s => s.id !== payload.old.id));
+            }
+          })
+          .subscribe();
+        channelRef.current = channel;
       }
       setLoading(false);
     } catch (err) {

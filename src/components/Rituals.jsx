@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase.js';
 import { Sun, Sunset, Moon, Send, Heart, Loader2, Award, CalendarDays } from 'lucide-react';
 
@@ -36,8 +36,13 @@ export default function Rituals() {
   const [partnerReflection, setPartnerReflection] = useState(null);
   const [submittingReflection, setSubmittingReflection] = useState(false);
 
+  const channelRefs = useRef([]);
+
   useEffect(() => {
     checkUser();
+    return () => {
+      channelRefs.current.forEach(c => supabase.removeChannel(c));
+    };
   }, []);
 
   async function checkUser() {
@@ -134,6 +139,60 @@ export default function Rituals() {
           .maybeSingle();
 
         if (partRef) setPartnerReflection(partRef);
+      }
+
+      // Abonnements temps réel pour synchroniser les rituels (objectifs, mots doux, bilans du soir)
+      if (userProfile.couple_id) {
+        // Nettoyer les anciens canaux
+        channelRefs.current.forEach(c => supabase.removeChannel(c));
+        channelRefs.current = [];
+
+        // 1. Objectifs du matin en temps réel
+        const goalsChannel = supabase
+          .channel('rituals_goals_realtime')
+          .on('postgres_changes', {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'couple_goals',
+            filter: `couple_id=eq.${userProfile.couple_id}`
+          }, (payload) => {
+            setGoalText(payload.new.goal_text);
+            setGoalSaved(true);
+          })
+          .subscribe();
+
+        // 2. Mots doux du midi en temps réel
+        const notesChannel = supabase
+          .channel('rituals_notes_realtime')
+          .on('postgres_changes', {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'sweet_notes',
+            filter: `couple_id=eq.${userProfile.couple_id}`
+          }, (payload) => {
+            setNotesList(prev => {
+              if (prev.some(n => n.id === payload.new.id)) return prev;
+              return [payload.new, ...prev];
+            });
+          })
+          .subscribe();
+
+        // 3. Bilans du soir en temps réel
+        const reflectionsChannel = supabase
+          .channel('rituals_reflections_realtime')
+          .on('postgres_changes', {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'evening_reflections',
+            filter: `couple_id=eq.${userProfile.couple_id}`
+          }, (payload) => {
+            if (payload.new.user_id !== userId) {
+              setPartnerReflection(payload.new);
+            }
+          })
+          .subscribe();
+
+        channelRefs.current = [goalsChannel, notesChannel, reflectionsChannel];
       }
 
       setLoading(false);

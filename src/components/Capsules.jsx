@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase.js';
 import { Lock, Unlock, Plus, Loader2, Calendar, MailOpen, AlertCircle, Heart } from 'lucide-react';
 
@@ -31,10 +31,17 @@ export default function Capsules() {
   // Time state for live countdown refresh
   const [now, setNow] = useState(new Date());
 
+  const channelRef = useRef(null);
+
   useEffect(() => {
     checkUser();
     const interval = setInterval(() => setNow(new Date()), 1000);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+      }
+    };
   }, []);
 
   async function checkUser() {
@@ -80,6 +87,25 @@ export default function Capsules() {
 
         if (error) throw error;
         setCapsules(list || []);
+
+        // Abonnement temps réel pour synchroniser les capsules
+        if (channelRef.current) supabase.removeChannel(channelRef.current);
+        const channel = supabase
+          .channel('capsules_realtime')
+          .on('postgres_changes', {
+            event: '*',
+            schema: 'public',
+            table: 'time_capsules',
+            filter: `couple_id=eq.${userProfile.couple_id}`
+          }, (payload) => {
+            if (payload.eventType === 'INSERT') {
+              setCapsules(prev => [...prev, payload.new].sort((a, b) => new Date(a.unlock_date) - new Date(b.unlock_date)));
+            } else if (payload.eventType === 'DELETE') {
+              setCapsules(prev => prev.filter(c => c.id !== payload.old.id));
+            }
+          })
+          .subscribe();
+        channelRef.current = channel;
       }
       setLoading(false);
     } catch (err) {

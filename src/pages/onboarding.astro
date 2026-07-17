@@ -191,6 +191,25 @@ import { ArrowLeft, HeartHandshake, Loader2, Copy } from 'lucide-react';
 
 			loadingScreen?.classList.add('hidden');
 
+			// Polling pour détecter la liaison du partenaire et rediriger automatiquement vers le tableau de bord
+			const checkCoupleInterval = setInterval(async () => {
+				const { data: updatedProfile, error: pollErr } = await supabase
+					.from('profiles')
+					.select('couple_id')
+					.eq('id', userId)
+					.maybeSingle();
+
+				if (pollErr) {
+					console.error('Error polling couple status:', pollErr);
+					return;
+				}
+
+				if (updatedProfile?.couple_id) {
+					clearInterval(checkCoupleInterval);
+					window.location.href = '/dashboard';
+				}
+			}, 3000);
+
 		} catch (err) {
 			console.error('Error initializing onboarding:', err);
 			loadingScreen?.classList.add('hidden');
