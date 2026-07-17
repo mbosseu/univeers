@@ -370,7 +370,12 @@ export default function Souvenirs() {
           </div>
         ) : (
           souvenirs.map((s) => (
-            <div key={s.id} className="card souvenir-card" style={{ padding: 0, overflow: 'hidden' }}>
+            <div 
+              key={s.id} 
+              className="card souvenir-card" 
+              style={{ padding: 0, overflow: 'hidden', cursor: 'pointer' }}
+              onClick={() => setViewingSouvenir(s)}
+            >
               <div
                 className="souvenir-image"
                 style={{ backgroundImage: `url(${s.media_url})` }}
