@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase.js';
-import { Send, Image, Eye, EyeOff, Lock, Unlock, Loader2, Sparkles } from 'lucide-react';
+import { Send, Image, Eye, EyeOff, Lock, Unlock, Loader2, Sparkles, Mic, Square } from 'lucide-react';
 
 export default function Chat() {
   const [loading, setLoading] = useState(true);
@@ -19,7 +19,24 @@ export default function Chat() {
   // Set of revealed secret message IDs for the current session
   const [revealedSecrets, setRevealedSecrets] = useState(new Set());
 
+  // Voice note recording states
+  const [isRecording, setIsRecording] = useState(false);
+  const [mediaRecorder, setMediaRecorder] = useState(null);
+  const [recordingSeconds, setRecordingSeconds] = useState(0);
+
   const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    let interval;
+    if (isRecording) {
+      interval = setInterval(() => {
+        setRecordingSeconds(prev => prev + 1);
+      }, 1000);
+    } else {
+      setRecordingSeconds(0);
+    }
+    return () => clearInterval(interval);
+  }, [isRecording]);
 
   useEffect(() => {
     checkUser();
@@ -195,6 +212,98 @@ export default function Chat() {
     setShowPhotoInput(true);
   };
 
+  // Voice recording functions
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      const chunks = [];
+      
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunks.push(e.data);
+      };
+      
+      recorder.onstop = async () => {
+        const audioBlob = new Blob(chunks, { type: 'audio/webm' });
+        await uploadAudio(audioBlob);
+        stream.getTracks().forEach(track => track.stop());
+      };
+      
+      setMediaRecorder(recorder);
+      recorder.start();
+      setIsRecording(true);
+    } catch (err) {
+      console.error("Error accessing microphone:", err);
+      alert("Impossible d'accéder au micro. Veuillez vérifier vos autorisations.");
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+      mediaRecorder.stop();
+      setIsRecording(false);
+    }
+  };
+
+  const uploadAudio = async (audioBlob) => {
+    setSending(true);
+    try {
+      const fileExt = 'webm';
+      const fileName = `${profile.couple_id}/${Date.now()}.${fileExt}`;
+      const filePath = `chat-audio/${fileName}`;
+
+      const { data: uploadData, error: uploadErr } = await supabase.storage
+        .from('souvenir-media')
+        .upload(filePath, audioBlob);
+
+      if (uploadErr) throw uploadErr;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('souvenir-media')
+        .getPublicUrl(filePath);
+
+      const { data: newMsg, error: insertErr } = await supabase
+        .from('messages')
+        .insert([{
+          couple_id: profile.couple_id,
+          sender_id: user.id,
+          message_text: publicUrl,
+          message_type: 'audio'
+        }])
+        .select()
+        .single();
+
+      if (insertErr) throw insertErr;
+
+      // Award XP
+      const { data: couple } = await supabase
+        .from('couples')
+        .select('flame_xp, flame_energy')
+        .eq('id', profile.couple_id)
+        .single();
+
+      if (couple) {
+        await supabase
+          .from('couples')
+          .update({
+            flame_xp: couple.flame_xp + 1,
+            flame_energy: Math.min(100, couple.flame_energy + 1)
+          })
+          .eq('id', profile.couple_id);
+      }
+
+      setMessages(prev => {
+        if (prev.some(m => m.id === newMsg.id)) return prev;
+        return [...prev, newMsg];
+      });
+    } catch (err) {
+      console.error('Error sending voice note:', err);
+      alert("Erreur lors de l'envoi de la note vocale.");
+    } finally {
+      setSending(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex-center" style={{ minHeight: '80vh', flexDirection: 'column', gap: '1rem' }}>
@@ -239,7 +348,7 @@ export default function Chat() {
                 className={`msg-wrapper ${isMe ? 'msg-me' : 'msg-partner'}`}
               >
                 <div
-                  className={`msg-bubble ${isSecretType ? 'msg-secret' : ''} ${isPhotoType ? 'msg-photo' : ''}`}
+                  className={`msg-bubble ${isSecretType ? 'msg-secret' : ''} ${isPhotoType ? 'msg-photo' : ''} ${m.message_type === 'audio' ? 'audio-message-bubble' : ''}`}
                   onClick={() => isSecretType && toggleSecretReveal(m.id)}
                   style={{ cursor: isSecretType ? 'pointer' : 'default' }}
                 >
@@ -259,6 +368,8 @@ export default function Chat() {
                     </div>
                   ) : isPhotoType ? (
                     <img src={m.message_text} alt="Photo partagée" className="chat-img-media" />
+                  ) : m.message_type === 'audio' ? (
+                    <audio src={m.message_text} controls className="chat-audio-player" />
                   ) : (
                     <p>{m.message_text}</p>
                   )}
@@ -289,37 +400,74 @@ export default function Chat() {
           </div>
         )}
 
-        <div className="input-row">
-          <button
-            type="button"
-            onClick={handleAttachRandomPhoto}
-            className={`tool-btn ${showPhotoInput ? 'active' : ''}`}
-            title="Joindre une photo"
-          >
-            <Image size={20} />
-          </button>
+        {isRecording ? (
+          <div className="input-row recording-active-row">
+            <div className="recording-status">
+              <span className="recording-dot"></span>
+              <span>Enregistrement : {Math.floor(recordingSeconds / 60)}:{(recordingSeconds % 60).toString().padStart(2, '0')}</span>
+            </div>
+            <div className="recording-actions">
+              <button 
+                type="button" 
+                onClick={() => {
+                  if (mediaRecorder) {
+                    mediaRecorder.onstop = null; // Prevent file upload on cancel
+                    mediaRecorder.stop();
+                    mediaRecorder.stream.getTracks().forEach(t => t.stop());
+                  }
+                  setIsRecording(false);
+                }} 
+                className="cancel-record-btn"
+              >
+                Annuler
+              </button>
+              <button type="button" onClick={stopRecording} className="stop-record-btn">
+                <Square size={14} /> Envoyer
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="input-row">
+            <button
+              type="button"
+              onClick={handleAttachRandomPhoto}
+              className={`tool-btn ${showPhotoInput ? 'active' : ''}`}
+              title="Joindre une photo"
+            >
+              <Image size={20} />
+            </button>
 
-          <button
-            type="button"
-            onClick={() => setIsSecret(!isSecret)}
-            className={`tool-btn secret-toggle-btn ${isSecret ? 'active' : ''}`}
-            title="Message Secret"
-          >
-            {isSecret ? <Lock size={20} color="var(--color-primary)" /> : <Unlock size={20} />}
-          </button>
+            <button
+              type="button"
+              onClick={() => setIsSecret(!isSecret)}
+              className={`tool-btn secret-toggle-btn ${isSecret ? 'active' : ''}`}
+              title="Message Secret"
+            >
+              {isSecret ? <Lock size={20} color="var(--color-primary)" /> : <Unlock size={20} />}
+            </button>
 
-          <input
-            type="text"
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
-            placeholder={isSecret ? "Écrire un message secret..." : "Écrire un message..."}
-            disabled={photoUrl.trim() !== ''}
-          />
+            <button
+              type="button"
+              onClick={startRecording}
+              className="tool-btn mic-btn"
+              title="Enregistrer un message vocal"
+            >
+              <Mic size={20} />
+            </button>
 
-          <button type="submit" disabled={sending} className="send-btn">
-            {sending ? <Loader2 className="spinner" size={18} /> : <Send size={18} />}
-          </button>
-        </div>
+            <input
+              type="text"
+              value={inputText}
+              onChange={(e) => setInputText(e.target.value)}
+              placeholder={isSecret ? "Écrire un message secret..." : "Écrire un message..."}
+              disabled={photoUrl.trim() !== ''}
+            />
+
+            <button type="submit" disabled={sending || (inputText.trim() === '' && photoUrl.trim() === '')} className="send-btn">
+              {sending ? <Loader2 className="spinner" size={18} /> : <Send size={18} />}
+            </button>
+          </div>
+        )}
       </form>
     </div>
   );

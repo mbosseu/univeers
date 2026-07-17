@@ -349,4 +349,110 @@ import ChatComponent from '../components/Chat.jsx';
 		background: rgba(169, 27, 34, 0.1);
 		border-radius: 4px;
 	}
+
+	/* Voice Note Styles */
+	.chat-audio-player {
+		max-width: 100%;
+		width: 220px;
+		height: 40px;
+		margin-top: 4px;
+	}
+
+	.msg-me .chat-audio-player {
+		filter: sepia(1) saturate(3) hue-rotate(320deg) invert(1);
+	}
+
+	.msg-partner .chat-audio-player {
+		filter: sepia(0.2) saturate(1.5) hue-rotate(340deg);
+	}
+
+	.audio-message-bubble {
+		padding: 4px 6px;
+	}
+
+	.recording-active-row {
+		background-color: rgba(169, 27, 34, 0.05);
+		border-radius: var(--radius-lg);
+		padding: 8px 12px;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		animation: pulse-bg 2s infinite ease-in-out;
+		border: 1px solid rgba(169, 27, 34, 0.1);
+		width: 100%;
+	}
+
+	.recording-status {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font-weight: 600;
+		color: var(--color-primary);
+		font-size: 0.9rem;
+	}
+
+	.recording-dot {
+		width: 10px;
+		height: 10px;
+		background-color: var(--color-primary);
+		border-radius: 50%;
+		display: inline-block;
+		animation: blink-dot 1s infinite alternate;
+	}
+
+	.recording-actions {
+		display: flex;
+		gap: 8px;
+		align-items: center;
+	}
+
+	.cancel-record-btn {
+		background: transparent;
+		border: none;
+		color: var(--color-text-light) !important;
+		font-size: 0.85rem;
+		font-weight: 600;
+		cursor: pointer;
+		padding: 6px 12px;
+		transition: color 0.2s;
+		box-shadow: none !important;
+	}
+
+	.cancel-record-btn:hover {
+		color: var(--color-primary) !important;
+		background: none !important;
+		box-shadow: none !important;
+		transform: none !important;
+	}
+
+	.stop-record-btn {
+		background-color: var(--color-primary);
+		color: var(--color-white);
+		border: none;
+		border-radius: var(--radius-full);
+		padding: 6px 14px;
+		font-size: 0.85rem;
+		font-weight: 600;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		transition: background-color 0.2s;
+		box-shadow: var(--shadow-sm);
+	}
+
+	.stop-record-btn:hover {
+		background-color: var(--color-primary-light);
+	}
+
+	@keyframes blink-dot {
+		0% { opacity: 0.2; }
+		100% { opacity: 1; }
+	}
+
+	@keyframes pulse-bg {
+		0% { background-color: rgba(169, 27, 34, 0.03); }
+		50% { background-color: rgba(169, 27, 34, 0.08); }
+		100% { background-color: rgba(169, 27, 34, 0.03); }
+	}
 </style>

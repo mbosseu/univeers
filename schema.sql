@@ -258,3 +258,6 @@ ALTER TABLE public.evening_reflections DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.time_capsules DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.messages DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.couple_events DISABLE ROW LEVEL SECURITY;
+
+-- 15. HABILITER LE TEMPS RÉEL (REALTIME) POUR LES MESSAGES DU CHAT
+alter publication supabase_realtime add table public.messages;
