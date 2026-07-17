@@ -158,23 +158,55 @@ export default function Chat() {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
-  // Upload photo to Supabase Storage
+  // Compress image to a smaller base64 data URL
+  const compressImage = (file, maxWidth = 800, quality = 0.7) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new window.Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let w = img.width;
+          let h = img.height;
+          if (w > maxWidth) {
+            h = (h * maxWidth) / w;
+            w = maxWidth;
+          }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  // Upload photo to Supabase Storage, fallback to base64 if storage fails
   const uploadPhoto = async (file) => {
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${profile.couple_id}/${Date.now()}_${Math.random().toString(36).substring(2)}.${fileExt}`;
-    const filePath = `chat-photos/${fileName}`;
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${profile.couple_id}/${Date.now()}_${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const filePath = `chat-photos/${fileName}`;
 
-    const { error: uploadErr } = await supabase.storage
-      .from('souvenir-media')
-      .upload(filePath, file);
+      const { error: uploadErr } = await supabase.storage
+        .from('souvenir-media')
+        .upload(filePath, file);
 
-    if (uploadErr) throw uploadErr;
+      if (uploadErr) throw uploadErr;
 
-    const { data: { publicUrl } } = supabase.storage
-      .from('souvenir-media')
-      .getPublicUrl(filePath);
+      const { data: { publicUrl } } = supabase.storage
+        .from('souvenir-media')
+        .getPublicUrl(filePath);
 
-    return publicUrl;
+      return publicUrl;
+    } catch (err) {
+      console.warn('Storage upload failed, using compressed base64 fallback:', err.message);
+      // Fallback: compress and return as base64 data URL
+      return await compressImage(file);
+    }
   };
 
   // Send message
@@ -235,7 +267,7 @@ export default function Chat() {
       setIsSecret(false);
     } catch (err) {
       console.error(err);
-      alert("Erreur lors de l'envoi du message.");
+      alert(`Erreur lors de l'envoi du message: ${err.message || JSON.stringify(err)}`);
     } finally {
       setSending(false);
     }
