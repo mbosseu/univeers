@@ -40,14 +40,14 @@ const { title } = Astro.props;
 		</script>
 	</head>
 	<body>
+		<!-- Global Starry Background -->
+		<div id="stars-container" class="global-stars-container"></div>
+
 		<!-- Splash Screen -->
 		<div id="splash-screen" class="splash-overlay">
 			<canvas id="splash-canvas" class="splash-canvas"></canvas>
 			<div class="splash-content">
-				<div class="splash-logo-wrapper">
-					<img src="/logo.png" alt="Univers Logo" class="splash-logo-img" />
-				</div>
-				<h1 class="splash-title">Univers</h1>
+				<img src="/logo.png" alt="Univers Logo" class="splash-logo-exact" />
 				<p class="splash-slogan">Chaque geste d'amour nourrit votre flamme</p>
 			</div>
 		</div>
@@ -178,6 +178,83 @@ const { title } = Astro.props;
 					setTimeout(dismissSplash, 4000);
 				}
 			}
+
+			// --- Global Starry Background Script ---
+			(function() {
+				const container = document.getElementById('stars-container');
+				if (!container) return;
+
+				const numStars = 30;
+				const stars = [];
+
+				for (let i = 0; i < numStars; i++) {
+					const star = document.createElement('div');
+					star.className = 'bg-star';
+					star.style.left = `${Math.random() * 100}vw`;
+					star.style.top = `${Math.random() * 100}vh`;
+					
+					const size = Math.random() * 3 + 2; // 2px to 5px
+					star.style.width = `${size}px`;
+					star.style.height = `${size}px`;
+					star.style.animationDelay = `${Math.random() * 4}s`;
+					star.style.animationDuration = `${Math.random() * 3 + 3}s`;
+					
+					container.appendChild(star);
+					stars.push(star);
+				}
+
+				// Progressive color change based on scroll position & location path
+				const updateStarColors = () => {
+					// Scroll fraction (0 to 1)
+					const scrollPercent = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight || 1);
+					const scrollHue = Math.floor(scrollPercent * 180);
+
+					// Path hash offset
+					const path = window.location.pathname;
+					let pathHash = 0;
+					for (let i = 0; i < path.length; i++) {
+						pathHash += path.charCodeAt(i);
+					}
+					const pathOffset = (pathHash % 12) * 30; // Distinct hue offsets for pages
+
+					const finalHue = (scrollHue + pathOffset) % 360;
+					const starColor = `hsl(${finalHue}, 100%, 75%)`;
+					document.documentElement.style.setProperty('--star-color', starColor);
+				};
+
+				// Touch / Mouse interaction (changes hue locally as you swipe or move)
+				const handlePointerMove = (e) => {
+					const x = e.touches ? e.touches[0].clientX : e.clientX;
+					const y = e.touches ? e.touches[0].clientY : e.clientY;
+					
+					const xPercent = x / window.innerWidth;
+					const yPercent = y / window.innerHeight;
+					const pointerHue = Math.floor((xPercent + yPercent) * 120);
+
+					const scrollPercent = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight || 1);
+					const scrollHue = Math.floor(scrollPercent * 120);
+
+					const path = window.location.pathname;
+					let pathHash = 0;
+					for (let i = 0; i < path.length; i++) {
+						pathHash += path.charCodeAt(i);
+					}
+					const pathOffset = (pathHash % 12) * 30;
+
+					const finalHue = (pointerHue + scrollHue + pathOffset) % 360;
+					document.documentElement.style.setProperty('--star-color', `hsl(${finalHue}, 100%, 75%)`);
+				};
+
+				window.addEventListener('scroll', updateStarColors, { passive: true });
+				window.addEventListener('mousemove', handlePointerMove, { passive: true });
+				window.addEventListener('touchmove', handlePointerMove, { passive: true });
+
+				// Initial color call
+				updateStarColors();
+
+				// Listen to navigation events (in case of SPA transitions)
+				setInterval(updateStarColors, 1000);
+			})();
 		</script>
 	</body>
 </html>
@@ -203,7 +280,7 @@ const { title } = Astro.props;
 		left: 0;
 		width: 100vw;
 		height: 100vh;
-		background: linear-gradient(135deg, var(--color-background) 0%, #ffebee 100%);
+		background: #fdf1e7; /* Arrière-plan beige chaud assorti exactement au logo */
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -234,36 +311,18 @@ const { title } = Astro.props;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 12px;
+		gap: 16px;
 	}
 
-	.splash-logo-wrapper {
-		width: 150px;
-		height: 150px;
-		background: white;
-		border-radius: 36px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		box-shadow: 0 10px 25px rgba(169, 27, 34, 0.12);
-		animation: pulse-glow 2s infinite alternate;
-		border: 1px solid rgba(169, 27, 34, 0.05);
-		overflow: hidden;
-	}
-
-	.splash-logo-img {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
+	.splash-logo-exact {
+		max-width: 300px;
+		width: 80%;
+		height: auto;
+		border-radius: 24px;
+		box-shadow: 0 10px 30px rgba(169, 27, 34, 0.08);
+		animation: pulse-logo 2.5s infinite alternate ease-in-out;
 		display: block;
-	}
-
-	.splash-title {
-		margin: 0;
-		font-size: 3rem;
-		font-family: 'Playfair Display', 'Georgia', serif;
-		color: var(--color-primary);
-		font-weight: bold;
+		border: 1px solid rgba(169, 27, 34, 0.03);
 	}
 
 	.splash-slogan {
@@ -274,14 +333,47 @@ const { title } = Astro.props;
 		font-weight: 500;
 	}
 
-	@keyframes pulse-glow {
+	@keyframes pulse-logo {
 		0% {
 			transform: scale(1);
-			box-shadow: 0 10px 25px rgba(169, 27, 34, 0.12);
+			box-shadow: 0 8px 25px rgba(169, 27, 34, 0.08);
 		}
 		100% {
-			transform: scale(1.05);
-			box-shadow: 0 15px 35px rgba(169, 27, 34, 0.25);
+			transform: scale(1.04);
+			box-shadow: 0 14px 35px rgba(169, 27, 34, 0.16);
+		}
+	}
+
+	/* Starry Background Styles */
+	.global-stars-container {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100vw;
+		height: 100vh;
+		pointer-events: none;
+		z-index: -1;
+		overflow: hidden;
+	}
+
+	.bg-star {
+		position: absolute;
+		background: var(--star-color, #ffffff);
+		border-radius: 50%;
+		box-shadow: 0 0 8px var(--star-color, #ffffff), 0 0 15px var(--star-color, #ffffff);
+		opacity: 0.5;
+		animation: twinkle 3s infinite alternate ease-in-out;
+		transition: background-color 0.8s ease, box-shadow 0.8s ease;
+	}
+
+	@keyframes twinkle {
+		0% {
+			opacity: 0.2;
+			transform: scale(0.8);
+		}
+		100% {
+			opacity: 0.8;
+			transform: scale(1.2);
 		}
 	}
 </style>
