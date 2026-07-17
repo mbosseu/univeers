@@ -1,0 +1,26 @@
+---
+import AppLayout from '../layouts/AppLayout.astro';
+import LoveLanguagesComponent from '../components/LoveLanguages.jsx';
+---
+
+<AppLayout title="Nos Langages de l'Amour">
+	<LoveLanguagesComponent client:load />
+</AppLayout>
+
+<style is:global>
+	/* Option select button styling */
+	.option-select-btn {
+		transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+	}
+
+	.option-select-btn:hover {
+		transform: translateY(-2px);
+		border-color: var(--color-primary) !important;
+		background-color: rgba(169, 27, 34, 0.03) !important;
+		box-shadow: var(--shadow-sm) !important;
+	}
+
+	.option-select-btn:active {
+		transform: translateY(0);
+	}
+</style>

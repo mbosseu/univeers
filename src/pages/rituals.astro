@@ -1,0 +1,243 @@
+---
+import AppLayout from '../layouts/AppLayout.astro';
+import RitualsComponent from '../components/Rituals.jsx';
+---
+
+<AppLayout title="Nos Rituels">
+	<RitualsComponent client:load />
+</AppLayout>
+
+<style is:global>
+	/* Rituals Styling */
+	.tabs-container {
+		display: flex;
+		background-color: rgba(169, 27, 34, 0.05);
+		border-radius: var(--radius-full);
+		padding: 4px;
+		margin-top: 1rem;
+	}
+
+	.tab-btn {
+		flex: 1;
+		background-color: transparent;
+		color: var(--color-text-light);
+		border: none;
+		border-radius: var(--radius-full);
+		padding: 10px 0;
+		font-size: 0.95rem;
+		font-weight: 600;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 6px;
+		transition: all 0.2s ease;
+		box-shadow: none;
+	}
+
+	.tab-btn:hover {
+		background-color: rgba(169, 27, 34, 0.03);
+		transform: none;
+		box-shadow: none;
+		color: var(--color-primary);
+	}
+
+	.tab-btn.active {
+		background-color: var(--color-white);
+		color: var(--color-primary);
+		box-shadow: var(--shadow-sm);
+	}
+
+	.tab-intro {
+		text-align: center;
+		margin-bottom: 1.5rem;
+	}
+
+	.tab-intro h3 {
+		margin-bottom: 0.5rem;
+	}
+
+	.tab-intro p {
+		font-size: 0.95rem;
+		color: var(--color-text-light);
+		line-height: 1.4;
+	}
+
+	/* Morning Styles */
+	.quote-box {
+		background-color: rgba(169, 27, 34, 0.02);
+		border-radius: var(--radius-lg);
+		padding: 1.5rem 2rem;
+		position: relative;
+		border-left: 4px solid var(--color-primary);
+		margin-bottom: 1rem;
+	}
+
+	.quote-icon {
+		font-family: var(--font-cursive);
+		font-size: 3rem;
+		color: rgba(169, 27, 34, 0.15);
+		position: absolute;
+		top: -10px;
+		left: 10px;
+		line-height: 1;
+	}
+
+	.quote-text {
+		font-style: italic;
+		font-size: 1.05rem;
+		color: var(--color-text);
+		line-height: 1.5;
+		margin: 0;
+	}
+
+	.goal-input {
+		width: 100%;
+		padding: 12px 16px;
+		border-radius: var(--radius-md);
+		border: 1px solid rgba(169, 27, 34, 0.2);
+		background-color: var(--color-background);
+		font-size: 1rem;
+		color: var(--color-text);
+		font-family: var(--font-main);
+	}
+
+	.goal-input:focus {
+		outline: none;
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 2px rgba(169, 27, 34, 0.1);
+	}
+
+	/* Noon Styles */
+	.notes-list {
+		display: flex;
+		flex-direction: column;
+		gap: 0.8rem;
+		max-height: 300px;
+		overflow-y: auto;
+		padding-right: 4px;
+	}
+
+	.note-bubble {
+		position: relative;
+		padding: 10px 14px;
+		border-radius: var(--radius-md);
+		max-width: 85%;
+		line-height: 1.4;
+		font-size: 0.95rem;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.note-me {
+		align-self: flex-end;
+		background-color: var(--color-primary);
+		color: var(--color-white);
+		border-bottom-right-radius: 2px;
+	}
+
+	.note-me strong {
+		color: rgba(255, 255, 255, 0.8) !important;
+	}
+
+	.note-partner {
+		align-self: flex-start;
+		background-color: var(--color-white);
+		border: 1px solid rgba(169, 27, 34, 0.1);
+		color: var(--color-text);
+		border-bottom-left-radius: 2px;
+		box-shadow: var(--shadow-sm);
+	}
+
+	.note-bubble strong {
+		font-size: 0.8rem;
+		color: var(--color-primary);
+		margin-bottom: 2px;
+	}
+
+	.note-bubble p {
+		margin: 0;
+	}
+
+	.note-time {
+		font-size: 0.7rem;
+		align-self: flex-end;
+		margin-top: 4px;
+		opacity: 0.7;
+	}
+
+	/* Evening Styles */
+	.reflections-comparison {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+	}
+
+	.comparison-row {
+		display: flex;
+		flex-direction: column;
+		gap: 0.6rem;
+	}
+
+	.comparison-row h5 {
+		font-size: 1rem;
+		color: var(--color-primary);
+		margin: 0;
+		font-weight: 700;
+	}
+
+	.comparison-boxes {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1rem;
+	}
+
+	.comparison-box {
+		padding: 12px;
+		border-radius: var(--radius-md);
+		font-size: 0.95rem;
+		line-height: 1.4;
+	}
+
+	.comparison-box.me {
+		background-color: rgba(169, 27, 34, 0.03);
+		border: 1px dashed rgba(169, 27, 34, 0.15);
+	}
+
+	.comparison-box.partner {
+		background-color: rgba(169, 27, 34, 0.05);
+		border: 1px solid rgba(169, 27, 34, 0.1);
+	}
+
+	.comparison-box strong {
+		display: block;
+		font-size: 0.85rem;
+		color: var(--color-primary);
+		margin-bottom: 4px;
+	}
+
+	.comparison-box p {
+		margin: 0;
+	}
+
+	.waiting-box {
+		text-align: center;
+		padding: 2rem 1rem;
+		border: 1px dashed rgba(169, 27, 34, 0.2);
+		border-radius: var(--radius-lg);
+		background-color: rgba(169, 27, 34, 0.02);
+	}
+
+	.waiting-box p {
+		margin: 0;
+		font-size: 0.95rem;
+		color: var(--color-text-light);
+		line-height: 1.5;
+	}
+
+	@media (max-width: 480px) {
+		.comparison-boxes {
+			grid-template-columns: 1fr;
+			gap: 0.8rem;
+		}
+	}
+</style>

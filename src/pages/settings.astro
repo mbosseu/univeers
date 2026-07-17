@@ -1,0 +1,21 @@
+---
+import AppLayout from '../layouts/AppLayout.astro';
+import SettingsComponent from '../components/Settings.jsx';
+---
+
+<AppLayout title="Nos Réglages">
+	<SettingsComponent client:load />
+</AppLayout>
+
+<style is:global>
+	/* Settings custom styling */
+	.settings-link-row {
+		transition: all 0.2s ease;
+	}
+
+	.settings-link-row:hover {
+		transform: translateX(4px);
+		background-color: rgba(169, 27, 34, 0.05) !important;
+		border-color: rgba(169, 27, 34, 0.15) !important;
+	}
+</style>

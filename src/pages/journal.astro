@@ -1,0 +1,20 @@
+---
+import AppLayout from '../layouts/AppLayout.astro';
+import JournalComponent from '../components/Journal.jsx';
+---
+
+<AppLayout title="Notre Journal Hebdomadaire">
+	<JournalComponent client:load />
+</AppLayout>
+
+<style is:global>
+	/* Weekly Stats card keyframe bounce */
+	@keyframes bounce {
+		0%, 100% {
+			transform: translateY(0);
+		}
+		50% {
+			transform: translateY(-4px);
+		}
+	}
+</style>

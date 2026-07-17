@@ -1,0 +1,455 @@
+---
+import AppLayout from '../layouts/AppLayout.astro';
+import { ArrowLeft, HeartHandshake, Loader2, Copy } from 'lucide-react';
+---
+
+<AppLayout title="Créer votre Univers">
+	<!-- Loading Screen -->
+	<div id="onboarding-loading" class="loading-screen">
+		<div class="spinner-container">
+			<Loader2 class="spinner" size={48} color="var(--color-primary)" />
+			<p>Vérification de votre Univers...</p>
+		</div>
+	</div>
+
+	<div class="onboarding-container">
+		<header class="top-nav">
+			<a href="/" id="btn-back" class="back-btn"><ArrowLeft size={24} /></a>
+			<h2 class="title-cursive">Connexion</h2>
+		</header>
+
+		<div class="content">
+			<div class="icon-wrapper">
+				<HeartHandshake size={64} color="var(--color-primary)" />
+			</div>
+			
+			<h1 class="main-title">Liez vos cœurs</h1>
+			<p class="description">Pour commencer l'expérience Univers, vous devez vous connecter à votre partenaire.</p>
+
+			<div class="code-section">
+				<h3>Votre code d'invitation</h3>
+				<div class="code-display">
+					<span id="invitation-code" class="code">CHARGEMENT...</span>
+					<button id="copy-btn" class="btn-copy">
+						<Copy size={16} />
+						<span>Copier</span>
+					</button>
+				</div>
+				<button id="share-btn" class="btn btn-secondary share-btn hidden" style="margin-top: 10px; width: 100%;">Partager l'invitation</button>
+				
+				<div class="qr-section" style="display: flex; flex-direction: column; align-items: center; margin-top: 1.2rem;">
+					<div class="qr-card" style="background: white; padding: 10px; border-radius: 12px; box-shadow: var(--shadow-sm); border: 1px solid rgba(169,27,34,0.1);">
+						<img id="qr-image" src="" alt="QR Code d'invitation" style="width: 140px; height: 140px; display: block;" class="hidden" />
+						<div id="qr-loader" style="width: 140px; height: 140px; display: flex; align-items: center; justify-content: center;">
+							<Loader2 class="spinner" size={24} />
+						</div>
+					</div>
+					<p class="help-text" style="margin-top: 8px;">Faites scanner ce code à votre partenaire pour vous lier instantanément.</p>
+				</div>
+			</div>
+
+			<div class="divider">
+				<span>OU</span>
+			</div>
+
+			<div class="input-section">
+				<h3>J'ai une invitation</h3>
+				<input type="text" id="code-input" placeholder="Entrez le code ici... (ex: UNI-ABCD-EFGH)" class="code-input" />
+				<div id="onboarding-error" class="error-message hidden"></div>
+				<button id="join-btn" class="btn btn-primary join-btn">
+					<span>Rejoindre l'Univers</span>
+					<Loader2 id="join-spinner" class="spinner hidden" size={18} />
+				</button>
+			</div>
+		</div>
+	</div>
+</AppLayout>
+
+<script>
+	import { supabase } from '../lib/supabase.js';
+
+	const loadingScreen = document.getElementById('onboarding-loading');
+	const codeElement = document.getElementById('invitation-code');
+	const copyBtn = document.getElementById('copy-btn');
+	const copyBtnText = copyBtn?.querySelector('span');
+	const codeInput = document.getElementById('code-input') as HTMLInputElement;
+	const joinBtn = document.getElementById('join-btn');
+	const joinSpinner = document.getElementById('join-spinner');
+	const onboardingError = document.getElementById('onboarding-error');
+	const btnBack = document.getElementById('btn-back');
+	
+	const qrImage = document.getElementById('qr-image') as HTMLImageElement;
+	const qrLoader = document.getElementById('qr-loader');
+	const shareBtn = document.getElementById('share-btn');
+
+	let inviteCode = '';
+
+	// Handle Back button logout to allow resetting state if needed
+	btnBack?.addEventListener('click', async (e) => {
+		e.preventDefault();
+		await supabase.auth.signOut();
+		window.location.href = '/';
+	});
+
+	async function initOnboarding() {
+		try {
+			// Check auth state
+			const { data: { session } } = await supabase.auth.getSession();
+			if (!session) {
+				window.location.href = '/';
+				return;
+			}
+
+			const userId = session.user.id;
+
+			// Check if user is already linked
+			const { data: profile } = await supabase
+				.from('profiles')
+				.select('couple_id')
+				.eq('id', userId)
+				.maybeSingle();
+
+			if (profile?.couple_id) {
+				window.location.href = '/dashboard';
+				return;
+			}
+
+			// Check if there is an active invite
+			const { data: existingInvite } = await supabase
+				.from('invitations')
+				.select('code')
+				.eq('creator_id', userId)
+				.eq('active', true)
+				.maybeSingle();
+
+			if (existingInvite) {
+				inviteCode = existingInvite.code;
+			} else {
+				// Generate a clean invitation code
+				const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+				const genPart = () => Array.from({length: 4}, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+				inviteCode = `UNI-${genPart()}-${genPart()}`;
+
+				// Store code
+				const { error } = await supabase
+					.from('invitations')
+					.insert([{ code: inviteCode, creator_id: userId, active: true }]);
+				
+				if (error) throw error;
+			}
+
+			// Update UI
+			if (codeElement) codeElement.textContent = inviteCode;
+			
+			// Load QR code image
+			if (qrImage) {
+				qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${inviteCode}`;
+				qrImage.onload = () => {
+					qrLoader?.classList.add('hidden');
+					qrImage.classList.remove('hidden');
+				};
+			}
+
+			// Show Web Share Button if supported
+			if (shareBtn && (navigator.share || true)) {
+				shareBtn.classList.remove('hidden');
+				shareBtn.addEventListener('click', () => {
+					if (navigator.share) {
+						navigator.share({
+							title: 'Rejoins mon Univers !',
+							text: `Voici mon code d'invitation Univers : ${inviteCode}`,
+							url: window.location.origin
+						}).catch(err => console.log('Share error:', err));
+					} else {
+						// Fallback: Copy link
+						const shareText = `Rejoins mon Univers ! Mon code d'invitation est : ${inviteCode}`;
+						navigator.clipboard.writeText(shareText).then(() => {
+							alert('Lien de partage copié dans le presse-papier !');
+						});
+					}
+				});
+			}
+
+			loadingScreen?.classList.add('hidden');
+
+		} catch (err) {
+			console.error('Error initializing onboarding:', err);
+			loadingScreen?.classList.add('hidden');
+			if (codeElement) codeElement.textContent = 'ERREUR';
+		}
+	}
+
+	initOnboarding();
+
+	// Copy to clipboard
+	copyBtn?.addEventListener('click', () => {
+		if (!inviteCode || inviteCode === 'CHARGEMENT...') return;
+		navigator.clipboard.writeText(inviteCode).then(() => {
+			if (copyBtnText) copyBtnText.textContent = 'Copié !';
+			copyBtn.classList.add('copied');
+			setTimeout(() => {
+				if (copyBtnText) copyBtnText.textContent = 'Copier';
+				copyBtn.classList.remove('copied');
+			}, 2000);
+		});
+	});
+
+	// Link partner RPC
+	joinBtn?.addEventListener('click', async (e) => {
+		e.preventDefault();
+		const rawCode = codeInput.value.trim().toUpperCase();
+		if (!rawCode) return;
+
+		// Clear previous errors & show loader
+		onboardingError?.classList.add('hidden');
+		joinSpinner?.classList.remove('hidden');
+		joinBtn.setAttribute('disabled', 'true');
+
+		try {
+			const { data: coupleId, error } = await supabase.rpc('link_partners', { invite_code: rawCode });
+			if (error) throw error;
+
+			if (coupleId) {
+				window.location.href = '/dashboard';
+			}
+		} catch (err: any) {
+			console.error('Linking error:', err);
+			onboardingError?.classList.remove('hidden');
+			if (onboardingError) {
+				onboardingError.textContent = err.message || 'Une erreur est survenue lors de la liaison.';
+			}
+			joinSpinner?.classList.add('hidden');
+			joinBtn.removeAttribute('disabled');
+		}
+	});
+</script>
+
+<style>
+	.onboarding-container {
+		display: flex;
+		flex-direction: column;
+		min-height: 100vh;
+		padding: 1.5rem;
+		max-width: 600px;
+		margin: 0 auto;
+		width: 100%;
+	}
+
+	.loading-screen {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: var(--color-background);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 1000;
+	}
+
+	.spinner-container {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
+		color: var(--color-text-light);
+		font-weight: 500;
+	}
+
+	.spinner {
+		animation: spin 1s linear infinite;
+	}
+
+	@keyframes spin {
+		0% { transform: rotate(0deg); }
+		100% { transform: rotate(360deg); }
+	}
+
+	.top-nav {
+		display: flex;
+		align-items: center;
+		margin-bottom: 2rem;
+	}
+
+	.back-btn {
+		color: var(--color-text);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
+		transition: background-color 0.2s;
+	}
+
+	.back-btn:hover {
+		background-color: rgba(169, 27, 34, 0.05);
+	}
+
+	.top-nav h2 {
+		margin: 0;
+		flex-grow: 1;
+		text-align: center;
+		font-size: 2rem;
+		margin-right: 40px; /* Balance back button */
+	}
+
+	.content {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		flex-grow: 1;
+	}
+
+	.icon-wrapper {
+		margin-bottom: 1.5rem;
+		padding: 1.5rem;
+		background-color: var(--color-white);
+		border-radius: 50%;
+		box-shadow: var(--shadow-md);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.main-title {
+		font-size: 2.2rem;
+		margin-bottom: 0.5rem;
+		color: var(--color-text);
+		text-align: center;
+	}
+
+	.description {
+		text-align: center;
+		color: var(--color-text-light);
+		margin-bottom: 2.5rem;
+		max-width: 320px;
+	}
+
+	.code-section, .input-section {
+		width: 100%;
+		max-width: 400px;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.code-section h3, .input-section h3 {
+		font-size: 1.1rem;
+		margin-bottom: 0.2rem;
+		color: var(--color-primary);
+		font-weight: 600;
+	}
+
+	.code-display {
+		display: flex;
+		align-items: center;
+		background-color: var(--color-white);
+		padding: 0.6rem;
+		border-radius: var(--radius-md);
+		border: 1px solid rgba(169, 27, 34, 0.2);
+		box-shadow: var(--shadow-sm);
+	}
+
+	.code {
+		flex-grow: 1;
+		font-family: monospace;
+		font-size: 1.3rem;
+		font-weight: 700;
+		text-align: center;
+		letter-spacing: 2px;
+		color: var(--color-text);
+	}
+
+	.btn-copy {
+		padding: 0.5rem 1rem;
+		font-size: 0.9rem;
+		border-radius: var(--radius-full);
+		background-color: var(--color-primary);
+		color: var(--color-white);
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		transition: all 0.2s ease;
+	}
+
+	.btn-copy.copied {
+		background-color: #2e7d32;
+	}
+
+	.help-text {
+		font-size: 0.85rem;
+		color: var(--color-text-light);
+		text-align: center;
+		margin-top: 0.5rem;
+		line-height: 1.4;
+	}
+
+	.divider {
+		width: 100%;
+		max-width: 400px;
+		display: flex;
+		align-items: center;
+		margin: 2rem 0;
+	}
+
+	.divider::before, .divider::after {
+		content: "";
+		flex-grow: 1;
+		height: 1px;
+		background-color: rgba(169, 27, 34, 0.15);
+	}
+
+	.divider span {
+		padding: 0 1rem;
+		color: var(--color-text-light);
+		font-weight: 700;
+		font-size: 0.85rem;
+	}
+
+	.code-input {
+		padding: 1rem;
+		border: 1px solid rgba(169, 27, 34, 0.2);
+		border-radius: var(--radius-md);
+		font-size: 1.1rem;
+		text-align: center;
+		font-family: monospace;
+		font-weight: 600;
+		letter-spacing: 1px;
+		background-color: var(--color-white);
+		color: var(--color-text);
+	}
+
+	.code-input:focus {
+		outline: none;
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 3px rgba(169, 27, 34, 0.1);
+	}
+
+	.join-btn {
+		margin-top: 0.8rem;
+		gap: 8px;
+	}
+
+	.join-btn:disabled {
+		opacity: 0.7;
+		cursor: not-allowed;
+	}
+
+	.error-message {
+		background-color: rgba(169, 27, 34, 0.1);
+		border-left: 4px solid var(--color-primary);
+		color: var(--color-primary);
+		padding: 10px;
+		border-radius: 4px;
+		font-size: 0.9rem;
+		font-weight: 500;
+		margin: 0.5rem 0;
+		text-align: center;
+	}
+
+	.hidden {
+		display: none !important;
+	}
+</style>

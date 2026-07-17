@@ -1,0 +1,43 @@
+---
+import AppLayout from '../layouts/AppLayout.astro';
+import AssistantComponent from '../components/Assistant.jsx';
+---
+
+<AppLayout title="Assistant d'Amour">
+	<AssistantComponent client:load />
+</AppLayout>
+
+<style is:global>
+	/* Styles for the AI Assistant component */
+	.category-btn {
+		transition: all 0.2s ease !important;
+	}
+
+	.category-btn:hover {
+		transform: translateY(-2px);
+		border-color: var(--color-primary) !important;
+		background-color: rgba(169, 27, 34, 0.02) !important;
+	}
+
+	.category-btn.active {
+		transform: translateY(0);
+		background-color: rgba(169, 27, 34, 0.08) !important;
+		border-color: var(--color-primary) !important;
+	}
+
+	.output-section h4 {
+		margin: 0;
+		font-size: 1.1rem;
+		font-weight: 700;
+		color: var(--color-text);
+	}
+
+	.actions-row button {
+		box-shadow: none !important;
+	}
+
+	.actions-row button:hover {
+		transform: translateY(-2px) !important;
+		box-shadow: var(--shadow-sm) !important;
+	}
+</style>

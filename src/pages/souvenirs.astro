@@ -1,0 +1,78 @@
+---
+import AppLayout from '../layouts/AppLayout.astro';
+import SouvenirsComponent from '../components/Souvenirs.jsx';
+---
+
+<AppLayout title="Nos Souvenirs">
+	<!-- Leaflet CSS and JS loaded via CDN for high fidelity map -->
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+	<SouvenirsComponent client:load />
+</AppLayout>
+
+<style is:global>
+	/* Souvenirs Page Styling */
+	.souvenir-card {
+		display: flex;
+		flex-direction: column;
+		border: 1px solid rgba(169, 27, 34, 0.05);
+	}
+
+	.souvenir-image {
+		width: 100%;
+		height: 200px;
+		background-size: cover;
+		background-position: center;
+		position: relative;
+	}
+
+	.souvenir-emotion-badge {
+		position: absolute;
+		bottom: 12px;
+		right: 12px;
+		background-color: var(--color-white);
+		border-radius: 50%;
+		width: 40px;
+		height: 40px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 1.5rem;
+		box-shadow: var(--shadow-md);
+	}
+
+	/* Map styles */
+	#souvenirs-map {
+		border: 1px solid rgba(169, 27, 34, 0.1);
+		box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+	}
+
+	.custom-pin {
+		filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3));
+	}
+
+	/* Emotion buttons picker styling */
+	.emotions-picker {
+		display: flex;
+		gap: 8px;
+		width: 100%;
+	}
+
+	.emotion-btn {
+		flex: 1;
+		transition: all 0.2s ease !important;
+	}
+
+	.emotion-btn:hover {
+		transform: scale(1.1);
+		border-color: var(--color-primary) !important;
+		background-color: rgba(169, 27, 34, 0.03) !important;
+	}
+
+	.emotion-btn.active {
+		transform: scale(1.1);
+		background-color: rgba(169, 27, 34, 0.08) !important;
+		border-color: var(--color-primary) !important;
+	}
+</style>

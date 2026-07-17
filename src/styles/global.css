@@ -1,0 +1,107 @@
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --color-primary: #a91b22; /* Deep red from logo */
+  --color-primary-light: #d32f2f;
+  --color-background: #fdfbf7; /* Warm cream */
+  --color-text: #2d1b19; /* Dark warm brown/black */
+  --color-text-light: #795548;
+  --color-white: #ffffff;
+  
+  --font-main: 'Inter', sans-serif;
+  --font-cursive: 'Great Vibes', cursive;
+  
+  --shadow-sm: 0 1px 3px rgba(169, 27, 34, 0.1);
+  --shadow-md: 0 4px 6px rgba(169, 27, 34, 0.1);
+  --shadow-lg: 0 10px 15px rgba(169, 27, 34, 0.15);
+  
+  --radius-md: 12px;
+  --radius-lg: 24px;
+  --radius-full: 9999px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--color-background);
+  color: var(--color-text);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.title-cursive {
+  font-family: var(--font-cursive);
+  font-weight: 400;
+  color: var(--color-primary);
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+button, .btn {
+  font-family: var(--font-main);
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+button:hover, .btn:hover {
+  background-color: var(--color-primary-light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+button:active, .btn:active {
+  transform: translateY(0);
+}
+
+.card {
+  background-color: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Layout Utilities */
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.text-center {
+  text-align: center;
+}

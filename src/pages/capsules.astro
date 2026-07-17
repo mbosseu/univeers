@@ -1,0 +1,52 @@
+---
+import AppLayout from '../layouts/AppLayout.astro';
+import CapsulesComponent from '../components/Capsules.jsx';
+---
+
+<AppLayout title="Capsules Temporelles">
+	<CapsulesComponent client:load />
+</AppLayout>
+
+<style is:global>
+	/* Custom styles for Capsules component */
+	.capsule-card {
+		transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+		border-radius: var(--radius-lg);
+	}
+
+	.capsule-card.unlocked {
+		background-color: var(--color-white);
+		box-shadow: var(--shadow-sm);
+	}
+
+	.capsule-card.unlocked:hover {
+		transform: translateY(-4px);
+		box-shadow: var(--shadow-lg);
+		border-color: rgba(46, 125, 50, 0.4) !important;
+	}
+
+	.capsule-card.locked {
+		background-color: rgba(169, 27, 34, 0.01);
+		border: 1px dashed rgba(169, 27, 34, 0.15) !important;
+	}
+
+	.info-badge {
+		line-height: 1.4;
+	}
+
+	.letter-modal {
+		box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+	}
+
+	/* Scrollbar customization for the letter body */
+	.letter-body::-webkit-scrollbar {
+		width: 4px;
+	}
+	.letter-body::-webkit-scrollbar-track {
+		background: transparent;
+	}
+	.letter-body::-webkit-scrollbar-thumb {
+		background: rgba(169, 27, 34, 0.2);
+		border-radius: 4px;
+	}
+</style>

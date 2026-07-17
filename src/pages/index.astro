@@ -1,0 +1,453 @@
+---
+import AppLayout from '../layouts/AppLayout.astro';
+import { Heart, Mail, Lock, Sparkles, Loader2 } from 'lucide-react';
+---
+
+<AppLayout title="Accueil">
+	<div class="landing-container">
+		<!-- Loading Screen -->
+		<div id="loading-screen" class="loading-screen">
+			<div class="spinner-container">
+				<Loader2 class="spinner" size={48} color="var(--color-primary)" />
+				<p>Chargement de votre Univers...</p>
+			</div>
+		</div>
+
+		<!-- Landing Content -->
+		<div class="header">
+			<h1 class="logo-text title-cursive">Univers</h1>
+			<p class="slogan">Chaque geste d'amour nourrit votre flamme.</p>
+		</div>
+
+		<div class="flame-illustration">
+			<div class="flame-spark">🔥</div>
+			<div class="flame-glow"></div>
+		</div>
+
+		<div class="actions">
+			<button id="btn-show-signup" class="btn btn-primary">
+				<Sparkles size={18} />
+				Créer un Univers
+			</button>
+			<button id="btn-show-login" class="btn btn-secondary">J'ai déjà un compte</button>
+		</div>
+
+		<!-- Auth Modal -->
+		<div id="auth-modal" class="modal-overlay hidden">
+			<div class="modal-card">
+				<div class="modal-header">
+					<h2 id="modal-title" class="title-cursive">Rejoindre l'Univers</h2>
+					<button id="btn-close-modal" class="close-btn">&times;</button>
+				</div>
+
+				<form id="auth-form" class="auth-form">
+					<div class="input-group">
+						<label for="email"><Mail size={16} /> Email</label>
+						<input type="email" id="email" required placeholder="amour@exemple.com" />
+					</div>
+
+					<div class="input-group">
+						<label for="password"><Lock size={16} /> Mot de passe</label>
+						<input type="password" id="password" required placeholder="••••••••" minlength="6" />
+					</div>
+
+					<div id="auth-error" class="error-message hidden"></div>
+
+					<button type="submit" id="btn-submit-auth" class="btn btn-primary submit-btn">
+						<span id="submit-btn-text">Se connecter</span>
+						<Loader2 id="submit-spinner" class="spinner hidden" size={18} />
+					</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</AppLayout>
+
+<script>
+	import { supabase } from '../lib/supabase.js';
+
+	const loadingScreen = document.getElementById('loading-screen');
+	const authModal = document.getElementById('auth-modal');
+	const modalTitle = document.getElementById('modal-title');
+	const authForm = document.getElementById('auth-form') as HTMLFormElement;
+	const emailInput = document.getElementById('email') as HTMLInputElement;
+	const passwordInput = document.getElementById('password') as HTMLInputElement;
+	const authError = document.getElementById('auth-error');
+	const submitBtnText = document.getElementById('submit-btn-text');
+	const submitSpinner = document.getElementById('submit-spinner');
+	const btnShowSignup = document.getElementById('btn-show-signup');
+	const btnShowLogin = document.getElementById('btn-show-login');
+	const btnCloseModal = document.getElementById('btn-close-modal');
+
+	let authMode: 'login' | 'signup' = 'login';
+
+	// Check auth state on load
+	async function checkSession() {
+		try {
+			const { data: { session } } = await supabase.auth.getSession();
+			if (session) {
+				// User is logged in, check profile
+				const { data: profile, error } = await supabase
+					.from('profiles')
+					.select('couple_id')
+					.eq('id', session.user.id)
+					.maybeSingle();
+
+				if (error) throw error;
+
+				if (profile && profile.couple_id) {
+					window.location.href = '/dashboard';
+				} else {
+					window.location.href = '/onboarding';
+				}
+			} else {
+				// No session, hide loading screen
+				loadingScreen?.classList.add('hidden');
+			}
+		} catch (err) {
+			console.error('Session check error:', err);
+			loadingScreen?.classList.add('hidden');
+		}
+	}
+
+	checkSession();
+
+	// Modal Control
+	function openModal(mode: 'login' | 'signup') {
+		authMode = mode;
+		authError?.classList.add('hidden');
+		if (authError) authError.textContent = '';
+		
+		if (mode === 'signup') {
+			modalTitle!.textContent = 'Créer votre Univers';
+			submitBtnText!.textContent = "S'inscrire";
+		} else {
+			modalTitle!.textContent = 'Bon retour ❤️';
+			submitBtnText!.textContent = 'Se connecter';
+		}
+		
+		authModal?.classList.remove('hidden');
+	}
+
+	function closeModal() {
+		authModal?.classList.add('hidden');
+		authForm.reset();
+	}
+
+	btnShowSignup?.addEventListener('click', () => openModal('signup'));
+	btnShowLogin?.addEventListener('click', () => openModal('login'));
+	btnCloseModal?.addEventListener('click', closeModal);
+	authModal?.addEventListener('click', (e) => {
+		if (e.target === authModal) closeModal();
+	});
+
+	// Form Submission
+	authForm?.addEventListener('submit', async (e) => {
+		e.preventDefault();
+		const email = emailInput.value.trim();
+		const password = passwordInput.value;
+
+		// UI Loading state
+		submitSpinner?.classList.remove('hidden');
+		submitBtnText!.textContent = authMode === 'login' ? 'Connexion...' : 'Inscription...';
+		authError?.classList.add('hidden');
+
+		try {
+			if (authMode === 'login') {
+				const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+				if (error) throw error;
+
+				// Login success -> check profile
+				const { data: profile } = await supabase
+					.from('profiles')
+					.select('couple_id')
+					.eq('id', data.user.id)
+					.maybeSingle();
+
+				if (profile?.couple_id) {
+					window.location.href = '/dashboard';
+				} else {
+					window.location.href = '/onboarding';
+				}
+			} else {
+				const { data, error } = await supabase.auth.signUp({
+					email,
+					password,
+					options: {
+						data: {
+							display_name: email.split('@')[0],
+						}
+					}
+				});
+				if (error) throw error;
+
+				if (data.user) {
+					// Sign up success -> onboarding
+					window.location.href = '/onboarding';
+				}
+			}
+		} catch (err: any) {
+			console.error('Auth error:', err);
+			authError?.classList.remove('hidden');
+			if (authError) {
+				authError.textContent = err.message || 'Une erreur est survenue lors de la connexion.';
+			}
+			// Reset button UI
+			submitSpinner?.classList.add('hidden');
+			submitBtnText!.textContent = authMode === 'login' ? 'Se connecter' : "S'inscrire";
+		}
+	});
+</script>
+
+<style>
+	.landing-container {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		min-height: 100vh;
+		padding: 2rem;
+		text-align: center;
+		position: relative;
+	}
+
+	.loading-screen {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: var(--color-background);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 1000;
+		transition: opacity 0.5s ease, visibility 0.5s ease;
+	}
+
+	.loading-screen.hidden {
+		opacity: 0;
+		visibility: hidden;
+		pointer-events: none;
+	}
+
+	.spinner-container {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
+		color: var(--color-text-light);
+		font-weight: 500;
+	}
+
+	.spinner {
+		animation: spin 1s linear infinite;
+	}
+
+	@keyframes spin {
+		0% { transform: rotate(0deg); }
+		100% { transform: rotate(360deg); }
+	}
+
+	.header {
+		margin-bottom: 3rem;
+	}
+
+	.logo-text {
+		font-size: 5.5rem;
+		margin: 0;
+		color: var(--color-primary);
+		line-height: 1;
+		filter: drop-shadow(0 2px 4px rgba(169, 27, 34, 0.15));
+	}
+
+	.slogan {
+		font-size: 1.2rem;
+		color: var(--color-text-light);
+		margin-top: 1rem;
+		font-weight: 500;
+	}
+
+	.flame-illustration {
+		position: relative;
+		font-size: 7rem;
+		margin-bottom: 4rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.flame-spark {
+		animation: pulse 2s infinite ease-in-out alternate;
+		z-index: 2;
+	}
+
+	.flame-glow {
+		position: absolute;
+		width: 120px;
+		height: 120px;
+		background: radial-gradient(circle, rgba(169, 27, 34, 0.25) 0%, transparent 70%);
+		border-radius: 50%;
+		filter: blur(10px);
+		animation: glowPulse 2s infinite ease-in-out alternate;
+	}
+
+	.actions {
+		display: flex;
+		flex-direction: column;
+		gap: 1.2rem;
+		width: 100%;
+		max-width: 320px;
+	}
+
+	.btn {
+		width: 100%;
+		padding: 1.1rem;
+		font-size: 1.1rem;
+		border-radius: var(--radius-full);
+	}
+
+	.btn-secondary {
+		background-color: transparent;
+		color: var(--color-primary);
+		border: 2px solid var(--color-primary);
+	}
+	
+	.btn-secondary:hover {
+		background-color: var(--color-primary);
+		color: var(--color-white);
+	}
+
+	/* Modal Styling (Glassmorphism) */
+	.modal-overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(45, 27, 25, 0.5);
+		backdrop-filter: blur(8px);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 100;
+		padding: 1.5rem;
+	}
+
+	.modal-overlay.hidden {
+		display: none;
+	}
+
+	.modal-card {
+		background: rgba(255, 255, 255, 0.95);
+		border: 1px solid rgba(255, 255, 255, 0.3);
+		border-radius: var(--radius-lg);
+		width: 100%;
+		max-width: 400px;
+		padding: 2.5rem 2rem;
+		box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+		animation: modalOpen 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+		position: relative;
+	}
+
+	@keyframes modalOpen {
+		from { transform: scale(0.9); opacity: 0; }
+		to { transform: scale(1); opacity: 1; }
+	}
+
+	.modal-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 2rem;
+	}
+
+	.modal-header h2 {
+		font-size: 2.5rem;
+		margin: 0;
+	}
+
+	.close-btn {
+		background: none;
+		border: none;
+		font-size: 2rem;
+		color: var(--color-text-light);
+		cursor: pointer;
+		padding: 0;
+		box-shadow: none;
+	}
+
+	.close-btn:hover {
+		background: none;
+		transform: none;
+		color: var(--color-primary);
+		box-shadow: none;
+	}
+
+	.auth-form {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+		text-align: left;
+	}
+
+	.input-group {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.input-group label {
+		font-size: 0.9rem;
+		font-weight: 600;
+		color: var(--color-text-light);
+		display: flex;
+		align-items: center;
+		gap: 6px;
+	}
+
+	.input-group input {
+		padding: 1rem;
+		border: 1px solid rgba(169, 27, 34, 0.2);
+		border-radius: var(--radius-md);
+		font-size: 1rem;
+		background: rgba(253, 251, 247, 0.8);
+		color: var(--color-text);
+		font-family: var(--font-main);
+	}
+
+	.input-group input:focus {
+		outline: none;
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 3px rgba(169, 27, 34, 0.1);
+	}
+
+	.submit-btn {
+		margin-top: 1rem;
+		gap: 10px;
+	}
+
+	.error-message {
+		background-color: rgba(169, 27, 34, 0.1);
+		border-left: 4px solid var(--color-primary);
+		color: var(--color-primary);
+		padding: 10px;
+		border-radius: 4px;
+		font-size: 0.9rem;
+		font-weight: 500;
+	}
+
+	.hidden {
+		display: none !important;
+	}
+
+	@keyframes pulse {
+		0% { transform: scale(0.92); }
+		100% { transform: scale(1.08); }
+	}
+
+	@keyframes glowPulse {
+		0% { transform: scale(0.8); opacity: 0.15; }
+		100% { transform: scale(1.2); opacity: 0.35; }
+	}
+</style>

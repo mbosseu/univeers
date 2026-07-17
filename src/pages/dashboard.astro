@@ -1,0 +1,281 @@
+---
+import AppLayout from '../layouts/AppLayout.astro';
+import DashboardComponent from '../components/Dashboard.jsx';
+---
+
+<AppLayout title="Notre Univers">
+	<DashboardComponent client:load />
+</AppLayout>
+
+<style is:global>
+	/* Localized styles for the dashboard component */
+	.dashboard-container {
+		display: flex;
+		flex-direction: column;
+		min-height: 100vh;
+		padding: 1.5rem;
+		padding-bottom: 80px; /* Space for bottom nav */
+		max-width: 600px;
+		margin: 0 auto;
+		width: 100%;
+	}
+
+	.dashboard-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 2rem;
+	}
+
+	.couple-info {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+	}
+
+	.avatar {
+		width: 50px;
+		height: 50px;
+		background-color: var(--color-white);
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 1.5rem;
+		box-shadow: var(--shadow-sm);
+	}
+
+	.couple-info h2 {
+		margin: 0;
+		font-size: 1.2rem;
+		color: var(--color-text);
+	}
+
+	.days-together {
+		margin: 0;
+		font-size: 0.85rem;
+		color: var(--color-text-light);
+	}
+
+	.icon-btn {
+		background: none;
+		border: none;
+		padding: 0.5rem;
+		box-shadow: none;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 50%;
+		transition: background-color 0.2s;
+	}
+
+	.icon-btn:hover {
+		background-color: rgba(169, 27, 34, 0.05);
+		transform: none;
+		box-shadow: none;
+	}
+
+	.flame-section {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		margin-bottom: 2.5rem;
+	}
+
+	.flame-title {
+		font-size: 2.5rem;
+		margin-top: 1rem;
+		margin-bottom: 0.2rem;
+	}
+
+	.flame-subtitle {
+		color: var(--color-text-light);
+		font-size: 0.9rem;
+	}
+
+	.cards-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 1.5rem;
+	}
+
+	.action-card {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.8rem;
+		border: 1px solid rgba(169, 27, 34, 0.05);
+	}
+
+	.card-header-icon {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		width: 100%;
+	}
+
+	.card-header-icon h4 {
+		margin: 0;
+		font-size: 1.1rem;
+		font-weight: 700;
+		color: var(--color-text);
+	}
+
+	.question-text {
+		font-size: 1.05rem;
+		font-weight: 500;
+		color: var(--color-text-light);
+		font-style: italic;
+		margin: 0.2rem 0;
+	}
+
+	.challenge-title {
+		font-size: 1.1rem;
+		color: var(--color-text);
+		margin: 0;
+	}
+
+	.challenge-desc {
+		font-size: 0.95rem;
+		color: var(--color-text-light);
+		margin: 0 0 0.5rem 0;
+	}
+
+	.response-textarea {
+		width: 100%;
+		min-height: 80px;
+		padding: 10px 12px;
+		border-radius: var(--radius-md);
+		border: 1px solid rgba(169, 27, 34, 0.2);
+		background-color: var(--color-background);
+		font-family: var(--font-main);
+		font-size: 0.95rem;
+		color: var(--color-text);
+		resize: vertical;
+		margin-bottom: 0.8rem;
+	}
+
+	.response-textarea:focus {
+		outline: none;
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 2px rgba(169, 27, 34, 0.1);
+	}
+
+	.btn-small {
+		padding: 8px 16px;
+		font-size: 0.9rem;
+		align-self: flex-start;
+		border-radius: var(--radius-full);
+		gap: 6px;
+	}
+
+	.btn-submit-response {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+	}
+
+	.responses-display {
+		display: flex;
+		flex-direction: column;
+		gap: 0.8rem;
+		margin-top: 0.5rem;
+	}
+
+	.my-response-box, .partner-response-box {
+		padding: 12px;
+		border-radius: var(--radius-md);
+		font-size: 0.95rem;
+	}
+
+	.my-response-box {
+		background-color: rgba(169, 27, 34, 0.03);
+		border: 1px dashed rgba(169, 27, 34, 0.15);
+	}
+
+	.partner-response-box {
+		background-color: rgba(169, 27, 34, 0.05);
+		border: 1px solid rgba(169, 27, 34, 0.1);
+	}
+
+	.my-response-box strong, .partner-response-box strong {
+		display: block;
+		font-size: 0.85rem;
+		color: var(--color-primary);
+		margin-bottom: 4px;
+	}
+
+	.my-response-box p, .partner-response-box p {
+		margin: 0;
+		color: var(--color-text);
+		line-height: 1.4;
+	}
+
+	.waiting-text {
+		color: var(--color-text-light) !important;
+		font-style: italic;
+	}
+
+	.completed-badge {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		background-color: rgba(46, 125, 50, 0.08);
+		border: 1px solid rgba(46, 125, 50, 0.15);
+		color: #2e7d32;
+		padding: 10px 14px;
+		border-radius: var(--radius-md);
+		font-size: 0.95rem;
+		font-weight: 600;
+		width: 100%;
+	}
+
+	/* Bottom Navigation bar */
+	.bottom-nav {
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		background-color: var(--color-white);
+		display: flex;
+		justify-content: space-around;
+		padding: 1rem 0;
+		box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+		border-top-left-radius: var(--radius-lg);
+		border-top-right-radius: var(--radius-lg);
+		z-index: 90;
+	}
+
+	.nav-item {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		color: var(--color-text-light);
+		gap: 0.2rem;
+		transition: color 0.2s;
+	}
+
+	.nav-item.active {
+		color: var(--color-primary);
+	}
+
+	.nav-item span {
+		font-size: 0.75rem;
+		font-weight: 500;
+	}
+	
+	.nav-icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.spinner {
+		animation: spin 1s linear infinite;
+	}
+
+	@keyframes spin {
+		0% { transform: rotate(0deg); }
+		100% { transform: rotate(360deg); }
+	}
+</style>
