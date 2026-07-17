@@ -290,7 +290,15 @@ export default function Chat() {
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream);
+      
+      let options = undefined;
+      if (MediaRecorder.isTypeSupported('audio/mp4')) {
+        options = { mimeType: 'audio/mp4' };
+      } else if (MediaRecorder.isTypeSupported('audio/webm')) {
+        options = { mimeType: 'audio/webm' };
+      }
+
+      const recorder = new MediaRecorder(stream, options);
       const chunks = [];
       
       recorder.ondataavailable = (e) => {
@@ -298,7 +306,8 @@ export default function Chat() {
       };
       
       recorder.onstop = async () => {
-        const audioBlob = new Blob(chunks, { type: recorder.mimeType });
+        const mime = recorder.mimeType || (options ? options.mimeType : 'audio/mp4');
+        const audioBlob = new Blob(chunks, { type: mime });
         await uploadAudio(audioBlob);
         stream.getTracks().forEach(track => track.stop());
       };
