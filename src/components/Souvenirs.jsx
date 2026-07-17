@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase.js';
-import { Image, MapPin, Calendar, Heart, Plus, Loader2, Smile, Compass } from 'lucide-react';
+import { Image, MapPin, Calendar, Heart, Plus, Loader2, Smile, Compass, CalendarHeart, History } from 'lucide-react';
 
 const EMOTIONS = [
   { label: 'Heureux 😊', emoji: '😊' },

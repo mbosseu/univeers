@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase.js';
-import { Lock, Unlock, Plus, Loader2, Calendar, MailOpen, AlertCircle, Heart } from 'lucide-react';
+import { Lock, Unlock, Plus, Loader2, Calendar, MailOpen, AlertCircle, Heart, CalendarHeart, History } from 'lucide-react';
 
 const DURATION_OPTIONS = [
   { label: '2 minutes (Test) ⏱️', value: 2 * 60 },

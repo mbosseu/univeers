@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase.js';
-import { Sun, Sunset, Moon, Send, Heart, Loader2, Award, CalendarDays } from 'lucide-react';
+import { Sun, Sunset, Moon, Send, Heart, Loader2, Award, CalendarDays, CalendarHeart, History } from 'lucide-react';
 
 const ROMANTIC_QUOTES = [
   "Le plus grand bonheur après celui d'aimer, c'est de confesser son amour. - Gide",
