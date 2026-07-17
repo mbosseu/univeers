@@ -102,12 +102,31 @@ import { ArrowLeft, HeartHandshake, Loader2, Copy } from 'lucide-react';
 
 			const userId = session.user.id;
 
-			// Check if user is already linked
-			const { data: profile } = await supabase
+			// Check if user is already linked (with fallback profile creation)
+			let { data: profile, error: profileErr } = await supabase
 				.from('profiles')
 				.select('couple_id')
 				.eq('id', userId)
 				.maybeSingle();
+
+			if (!profile) {
+				console.log('Profile row missing for user. Creating one...');
+				const { data: newProfile, error: profileInsertErr } = await supabase
+					.from('profiles')
+					.insert([{
+						id: userId,
+						email: session.user.email,
+						display_name: session.user.user_metadata?.display_name || session.user.email.split('@')[0]
+					}])
+					.select('couple_id')
+					.single();
+				
+				if (profileInsertErr) {
+					console.error('Error creating profile fallback:', profileInsertErr);
+					throw profileInsertErr;
+				}
+				profile = newProfile;
+			}
 
 			if (profile?.couple_id) {
 				window.location.href = '/dashboard';
