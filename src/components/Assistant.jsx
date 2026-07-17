@@ -286,7 +286,7 @@ export default function Assistant() {
           <span>Souvenirs</span>
         </a>
       
-        <a href="/location" className={"nav-item" + (window.location.pathname === '/location' ? ' active' : '')}>
+        <a href="/location" className={"nav-item" + ((typeof window !== 'undefined' ? window.location.pathname : '') === '/location' ? ' active' : '')}>
           <div className="nav-icon"><MapPin /></div>
           <span>Position</span>
         </a>

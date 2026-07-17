@@ -128,16 +128,7 @@ export default function LocationMap() {
             setHasPermission(true);
             const { latitude, longitude } = position.coords;
             setMyLocation([latitude, longitude]);
-            
-            // Update Supabase
-            await supabase
-              .from('profiles')
-              .update({
-                latitude,
-                longitude,
-                location_updated_at: new Date().toISOString()
-              })
-              .eq('id', userId);
+            // Supabase update is now handled globally by GlobalLocationTracker
           },
           (error) => {
             console.error('Geolocation error:', error);
