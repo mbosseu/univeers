@@ -128,7 +128,8 @@ import { ArrowLeft, HeartHandshake, Loader2, Copy } from 'lucide-react';
 				profile = newProfile;
 			}
 
-			if (profile?.couple_id) {
+			const isAddingPartner = window.location.search.includes('action=add_partner');
+			if (profile?.couple_id && !isAddingPartner) {
 				window.location.href = '/dashboard';
 				return;
 			}

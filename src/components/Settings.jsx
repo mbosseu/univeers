@@ -243,6 +243,13 @@ export default function Settings() {
             </div>
           </div>
         )}
+
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: availableCouples.length > 1 ? '-10px' : '0', marginBottom: '10px' }}>
+          <a href="/onboarding?action=add_partner" className="btn btn-secondary" style={{ padding: '8px 12px', fontSize: '0.9rem', display: 'flex', alignItems: 'center' }}>
+            <Heart size={16} style={{ marginRight: '6px' }} /> Ajouter un partenaire
+          </a>
+        </div>
+
         <div className="input-group flex-col" style={{ gap: '6px' }}>
           <label style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--color-text)' }}>Votre Nom d'affichage</label>
           <input
