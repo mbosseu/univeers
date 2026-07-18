@@ -78,13 +78,24 @@ export default function GlobalNotifications() {
       // 3. Setup abonnement global aux messages (Notifications Locales)
       if (channelRef.current) supabase.removeChannel(channelRef.current);
 
+      const { data: userCouplesList } = await supabase
+        .from('user_couples')
+        .select('couple_id')
+        .eq('user_id', session.user.id);
+        
+      let filterStr = `couple_id=eq.${profile.couple_id}`;
+      if (userCouplesList && userCouplesList.length > 1) {
+        const ids = userCouplesList.map(c => c.couple_id).join(',');
+        filterStr = `couple_id=in.(${ids})`;
+      }
+
       const channel = supabase
         .channel('global_notifications')
         .on('postgres_changes', {
           event: 'INSERT',
           schema: 'public',
           table: 'messages',
-          filter: `couple_id=eq.${profile.couple_id}`
+          filter: filterStr
         }, (payload) => {
           if (payload.new.sender_id === session.user.id) return;
 

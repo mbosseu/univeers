@@ -20,6 +20,7 @@ export default function Settings() {
   const [selectedTheme, setSelectedTheme] = useState('theme-romantic');
   const [updating, setUpdating] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [availableCouples, setAvailableCouples] = useState([]);
 
   useEffect(() => {
     checkUser();
@@ -59,6 +60,31 @@ export default function Settings() {
           setAnniversaryDate(coupleDetails.anniversary_date);
         }
       }
+      
+      // Load all couples the user belongs to (multi-partner support)
+      const { data: userCouplesList } = await supabase
+        .from('user_couples')
+        .select('couple_id')
+        .eq('user_id', userId);
+
+      let couplesData = [];
+      if (userCouplesList && userCouplesList.length > 0) {
+        for (const uc of userCouplesList) {
+          const { data: partners } = await supabase
+            .from('profiles')
+            .select('display_name, id')
+            .eq('couple_id', uc.couple_id)
+            .neq('id', userId);
+            
+          const partnerName = partners && partners.length > 0 && partners[0].display_name ? partners[0].display_name : 'Partenaire mystère';
+          couplesData.push({
+            couple_id: uc.couple_id,
+            partner_name: partnerName
+          });
+        }
+      }
+      setAvailableCouples(couplesData);
+
       setLoading(false);
     } catch (err) {
       console.error(err);
@@ -125,6 +151,25 @@ export default function Settings() {
     applyThemeStyles(themeId);
   };
 
+  const handleSwitchUniverse = async (e) => {
+    const newCoupleId = e.target.value;
+    if (newCoupleId === profile?.couple_id) return;
+    
+    setUpdating(true);
+    try {
+      await supabase
+        .from('profiles')
+        .update({ couple_id: newCoupleId })
+        .eq('id', user.id);
+        
+      window.location.reload();
+    } catch (err) {
+      console.error(err);
+      alert("Erreur lors du changement d'Univers");
+      setUpdating(false);
+    }
+  };
+
   const handleDeleteAccount = async () => {
     const confirm = window.confirm("⚠️ ATTENTION : Êtes-vous sûr(e) de vouloir supprimer votre compte Univers ? Cette action effacera définitivement votre profil, votre couple et tous vos souvenirs partagés.");
     if (!confirm) return;
@@ -178,6 +223,26 @@ export default function Settings() {
       <form onSubmit={handleSaveSettings} className="card flex-col" style={{ gap: '1.5rem', marginBottom: '1.5rem' }}>
         <h3 className="title-cursive" style={{ fontSize: '2rem', borderBottom: '1px solid rgba(169,27,34,0.1)', paddingBottom: '8px' }}>Profil & Couple</h3>
         
+        {availableCouples.length > 1 && (
+          <div className="input-group">
+            <label>Univers Actif (Basculez entre vos partenaires)</label>
+            <div className="input-with-icon">
+              <Heart className="input-icon" size={20} />
+              <select 
+                className="input-field" 
+                value={profile?.couple_id || ''}
+                onChange={handleSwitchUniverse}
+                disabled={updating}
+              >
+                {availableCouples.map(c => (
+                  <option key={c.couple_id} value={c.couple_id}>
+                    Univers avec {c.partner_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        )}
         <div className="input-group flex-col" style={{ gap: '6px' }}>
           <label style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--color-text)' }}>Votre Nom d'affichage</label>
           <input
